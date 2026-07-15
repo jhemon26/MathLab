@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Lab Practical — Solutions</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] }, startup: { typeset: true } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root {
+  --bg: #0c0e13;
+  --surface: #13161d;
+  --card: #181c25;
+  --border: #252a36;
+  --border-accent: #2d5cff;
+  --text: #c9cdd8;
+  --text-bright: #eef0f6;
+  --text-dim: #6b7189;
+  --accent: #3b6eff;
+  --accent-glow: rgba(59,110,255,0.12);
+  --accent-soft: #1e2d5a;
+  --green: #3dd68c;
+  --green-dim: rgba(61,214,140,0.08);
+  --orange: #f0a050;
+  --red: #f06060;
+  --purple: #b388ff;
+  --cyan: #56d4e8;
+  --yellow: #e8d44d;
+
+  /* code theme */
+  --code-bg: #0d1017;
+  --code-border: #1a1f2e;
+  --code-kw: #c678dd;
+  --code-fn: #61afef;
+  --code-str: #98c379;
+  --code-num: #d19a66;
+  --code-cmt: #5c6370;
+  --code-op: #56b6c2;
+  --code-var: #e06c75;
+  --code-bracket: #da70d6;
+  --code-text: #abb2bf;
+
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.wrap {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: 0 clamp(14px, 4vw, 28px) 120px;
+}
+
+/* ── Topbar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12,14,19,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px clamp(14px, 4vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.watermark {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: .06em;
+  opacity: .6;
+}
+.lang-toggle {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 18px;
+  min-height: 38px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.lang-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+.lang-btn:hover:not(.active) { color: var(--text-bright); }
+
+/* ── Section headers ── */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 56px 0 28px;
+  min-width: 0;
+}
+.section-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+.section-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  min-width: 0;
+}
+.section-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── Question cards ── */
+.qcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 28px;
+  overflow: hidden;
+  max-width: 100%;
+}
+.qcard-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.qnum {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-glow);
+  border: 1px solid rgba(59,110,255,0.25);
+  padding: 4px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.qtitle {
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--text-bright);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.qbody { padding: 22px; }
+
+/* labels */
+.lbl {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lbl::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.lbl-q { color: var(--text-dim); margin-top: 0; }
+.lbl-a { color: var(--green); margin-top: 22px; }
+.lbl-c { color: var(--cyan); margin-top: 22px; }
+.lbl-e { color: var(--orange); margin-top: 22px; }
+
+.qtext {
+  color: var(--text);
+  font-size: .94rem;
+  overflow-wrap: anywhere;
+}
+
+/* answer box */
+.ans-box {
+  background: var(--green-dim);
+  border-left: 3px solid var(--green);
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  font-size: .94rem;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.ans-box .final { font-weight: 700; color: var(--green); }
+
+/* ── Code blocks ── */
+.code-shell {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 100%;
+}
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #111622;
+  border-bottom: 1px solid var(--code-border);
+}
+.code-lang-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.code-lang-tag.mathematica { color: var(--code-var); }
+.code-lang-tag.fortran { color: var(--code-op); }
+.code-dots { display: flex; gap: 6px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots .d1 { background: #ff5f57; }
+.code-dots .d2 { background: #febc2e; }
+.code-dots .d3 { background: #28c840; }
+
+pre.code {
+  padding: 18px 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  font-family: var(--mono);
+  font-size: .82rem;
+  line-height: 1.7;
+  color: var(--code-text);
+  margin: 0;
+}
+.kw { color: var(--code-kw); font-weight: 600; }
+.fn { color: var(--code-fn); }
+.st { color: var(--code-str); }
+.nm { color: var(--code-num); }
+.cm { color: var(--code-cmt); font-style: italic; }
+.op { color: var(--code-op); }
+.vr { color: var(--code-var); }
+.br { color: var(--code-bracket); }
+.pp { color: #e5c07b; }
+
+/* explanation */
+.expl {
+  font-size: .93rem;
+  color: var(--text);
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+.expl p { margin-bottom: 10px; }
+.expl p:last-child { margin-bottom: 0; }
+
+mjx-container {
+  max-width: 100%;
+}
+
+mjx-container[display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0 6px;
+}
+
+/* euler table */
+table.calc {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: .82rem;
+  margin: 10px 0;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+table.calc th, table.calc td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+table.calc th { background: var(--accent-soft); color: var(--text-bright); }
+table.calc td { color: var(--text); }
+
+@media (max-width: 720px) {
+  .wrap { padding-bottom: 84px; }
+
+  .section-head {
+    gap: 10px;
+    margin: 34px 0 18px;
+  }
+
+  .section-tag {
+    font-size: 10px;
+    padding: 4px 9px;
+  }
+
+  .section-title { font-size: 1.12rem; }
+
+  .qcard {
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+
+  .qcard-head {
+    padding: 14px 15px;
+    gap: 10px;
+  }
+
+  .qnum {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .qtitle { font-size: .9rem; line-height: 1.45; }
+
+  .qbody { padding: 15px; }
+
+  .lbl {
+    font-size: 9.5px;
+    letter-spacing: .09em;
+    margin-bottom: 8px;
+  }
+
+  .lbl-a,
+  .lbl-c,
+  .lbl-e { margin-top: 18px; }
+
+  .qtext,
+  .ans-box,
+  .expl { font-size: .9rem; }
+
+  .ans-box { padding: 12px 13px; }
+
+  .code-bar { padding: 7px 12px; }
+
+  pre.code {
+    padding: 14px 13px;
+    font-size: .74rem;
+    line-height: 1.65;
+  }
+
+  table.calc {
+    font-size: .74rem;
+    margin-top: 12px;
+  }
+
+  table.calc th,
+  table.calc td { padding: 7px 9px; }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .watermark { font-size: 11px; }
+
+  .lang-btn {
+    min-height: 34px;
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .section-line { display: none; }
+
+  .qcard-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .qnum { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <span class="watermark">J.Emon</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+    <button class="lang-btn" id="btn-bn" onclick="setLang('bn')">বাংলা</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--                 SECTION ক — MATHEMATICA                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-head">
+  <span class="section-tag">Section ক</span>
+  <span class="section-title">Mathematica</span>
+  <span class="section-line"></span>
+</div>
+
+<!-- ─── Q1(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q1(ক)</span>
+    <span class="qtitle" data-en="Pair of Straight Lines" data-bn="সরলরেখা যুগল">Pair of Straight Lines</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Show that $x^2-5xy+4y^2+x+2y-2=0$ represents a pair of straight lines. Find the point of intersection and the angle between them." data-bn="দেখাও যে $x^2-5xy+4y^2+x+2y-2=0$ সমীকরণটি একজোড়া সরলরেখা প্রকাশ করে। ইহাদের ছেদবিন্দুর স্থানাঙ্ক ও মধ্যবর্তী কোণ নির্ণয় কর।">Show that $x^2-5xy+4y^2+x+2y-2=0$ represents a pair of straight lines. Find the point of intersection and the angle between them.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="The two lines are: <span class='final'>x − y − 1 = 0</span> and <span class='final'>x − 4y + 2 = 0</span>. Intersection point: <span class='final'>(2, 1)</span>. Angle between them: <span class='final'>arctan(3/5) ≈ 30.96°</span>" data-bn="সরলরেখা দুটি: <span class='final'>x − y − 1 = 0</span> এবং <span class='final'>x − 4y + 2 = 0</span>। ছেদবিন্দু: <span class='final'>(2, 1)</span>। মধ্যবর্তী কোণ: <span class='final'>arctan(3/5) ≈ 30.96°</span>">The two lines are: <span class="final">x − y − 1 = 0</span> and <span class="final">x − 4y + 2 = 0</span>. Intersection point: <span class="final">(2, 1)</span>. Angle between them: <span class="final">arctan(3/5) ≈ 30.96°</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Verify degeneracy & factor into two lines *)</span>
+<span class="vr">eq</span> <span class="op">=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">5</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">2</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">2</span>;
+<span class="fn">Factor</span><span class="br">[</span><span class="vr">eq</span><span class="br">]</span>
+
+<span class="cm">(* Solve intersection of the two lines *)</span>
+<span class="vr">sol</span> <span class="op">=</span> <span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">1</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">x</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* Angle between lines *)</span>
+<span class="vr">m1</span> <span class="op">=</span> <span class="nm">1</span>; <span class="vr">m2</span> <span class="op">=</span> <span class="nm">1</span><span class="op">/</span><span class="nm">4</span>;
+<span class="vr">angle</span> <span class="op">=</span> <span class="fn">ArcTan</span><span class="br">[</span><span class="fn">Abs</span><span class="br">[</span><span class="br">(</span><span class="vr">m1</span> <span class="op">-</span> <span class="vr">m2</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="nm">1</span> <span class="op">+</span> <span class="vr">m1</span><span class="op">*</span><span class="vr">m2</span><span class="br">)</span><span class="br">]</span><span class="br">]</span> <span class="op">//</span> <span class="fn">N</span>
+
+<span class="cm">(* Plot the pair of lines *)</span>
+<span class="fn">ContourPlot</span><span class="br">[</span><span class="vr">eq</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">-2</span>, <span class="nm">6</span><span class="br">}</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">-2</span>, <span class="nm">4</span><span class="br">}</span>, <span class="pp">PlotPoints</span> <span class="op">-></span> <span class="nm">100</span><span class="br">]</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>For the general second-degree equation $ax^2+2hxy+by^2+2gx+2fy+c=0$, the coefficients here are $a=1,\\ h=-5/2,\\ b=4,\\ g=1/2,\\ f=1,\\ c=-2$. A pair-of-lines condition requires the determinant $\\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$. Substituting: $(1)(4)(-2)+2(1)(1/2)(-5/2)-(1)(1)-(4)(1/4)-(-2)(25/4) = -8-2.5-1-1+12.5 = 0$. Confirmed.</p><p>Since $x^2-5xy+4y^2$ factors as $(x-y)(x-4y)$, the full equation is $(x-y+l)(x-4y+m)=0$. Matching the linear and constant terms gives $l=-1,\\ m=2$.</p><p>Solving the two line equations simultaneously gives the intersection point $(2,1)$. The angle formula $\\tan\\theta=|\\frac{m_1-m_2}{1+m_1 m_2}|$ with slopes $1$ and $1/4$ gives $\\theta=\\arctan(3/5)\\approx30.96°$.</p>" data-bn="<p>সাধারণ দ্বিমাত্রিক সমীকরণ $ax^2+2hxy+by^2+2gx+2fy+c=0$-এর জন্য এখানে $a=1,\\ h=-5/2,\\ b=4,\\ g=1/2,\\ f=1,\\ c=-2$। সরলরেখা যুগলের শর্ত হলো নির্ণায়ক $\\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$। মান বসিয়ে পাই: $-8-2.5-1-1+12.5 = 0$। প্রমাণিত।</p><p>যেহেতু $x^2-5xy+4y^2 = (x-y)(x-4y)$, তাই পূর্ণ সমীকরণটি $(x-y+l)(x-4y+m)=0$ আকারে লেখা যায়। একঘাত ও ধ্রুব পদ মেলালে $l=-1,\\ m=2$ পাওয়া যায়।</p><p>দুটি সরলরেখার সমীকরণ একসাথে সমাধান করলে ছেদবিন্দু $(2,1)$ পাওয়া যায়। কোণের সূত্র $\\tan\\theta=|\\frac{m_1-m_2}{1+m_1 m_2}|$-এ ঢাল $1$ ও $1/4$ বসিয়ে $\\theta=\\arctan(3/5)\\approx30.96°$।</p>"><p>For the general second-degree equation $ax^2+2hxy+by^2+2gx+2fy+c=0$, the coefficients here are $a=1,\ h=-5/2,\ b=4,\ g=1/2,\ f=1,\ c=-2$. A pair-of-lines condition requires the determinant $\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$. Substituting: $(1)(4)(-2)+2(1)(1/2)(-5/2)-(1)(1)-(4)(1/4)-(-2)(25/4) = -8-2.5-1-1+12.5 = 0$. Confirmed.</p><p>Since $x^2-5xy+4y^2$ factors as $(x-y)(x-4y)$, the full equation is $(x-y+l)(x-4y+m)=0$. Matching the linear and constant terms gives $l=-1,\ m=2$.</p><p>Solving the two line equations simultaneously gives the intersection point $(2,1)$. The angle formula $\tan\theta=|\frac{m_1-m_2}{1+m_1 m_2}|$ with slopes $1$ and $1/4$ gives $\theta=\arctan(3/5)\approx30.96°$.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q1(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q1(খ)</span>
+    <span class="qtitle" data-en="Identify & Reduce a Conic" data-bn="কণিক শনাক্তকরণ ও আদর্শ রূপ">Identify & Reduce a Conic</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Identify the conic $x^2+12xy-4y^2-6x+4y+9=0$, reduce it to standard form, and plot it." data-bn="$x^2+12xy-4y^2-6x+4y+9=0$ কণিকটি শনাক্ত কর, আদর্শ আকারে প্রকাশ কর এবং ইহার চিত্র অঙ্কন কর।">Identify the conic $x^2+12xy-4y^2-6x+4y+9=0$, reduce it to standard form, and plot it.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Type: <span class='final'>Hyperbola</span>. Center: <span class='final'>(0, 0.5)</span>. Standard form (rotated axes): $$\\frac{Y^2}{5/4} - \\frac{X^2}{2} = 1$$" data-bn="ধরন: <span class='final'>অধিবৃত্ত (Hyperbola)</span>। কেন্দ্র: <span class='final'>(0, 0.5)</span>। আদর্শ রূপ (ঘূর্ণিত অক্ষে): $$\\frac{Y^2}{5/4} - \\frac{X^2}{2} = 1$$">Type: <span class="final">Hyperbola</span>. Center: <span class="final">(0, 0.5)</span>. Standard form (rotated axes): $$\frac{Y^2}{5/4} - \frac{X^2}{2} = 1$$</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Find center, eigenvalues for rotation, and plot *)</span>
+<span class="vr">eq</span> <span class="op">=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="nm">12</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">6</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">9</span>;
+
+<span class="vr">center</span> <span class="op">=</span> <span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="fn">D</span><span class="br">[</span><span class="vr">eq</span>, <span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="fn">D</span><span class="br">[</span><span class="vr">eq</span>, <span class="vr">y</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
+
+<span class="vr">mat</span> <span class="op">=</span> <span class="br">{{</span><span class="nm">1</span>, <span class="nm">6</span><span class="br">}</span>, <span class="br">{</span><span class="nm">6</span>, <span class="nm">-4</span><span class="br">}}</span>;
+<span class="br">{</span><span class="vr">evals</span>, <span class="vr">evecs</span><span class="br">}</span> <span class="op">=</span> <span class="fn">Eigensystem</span><span class="br">[</span><span class="vr">mat</span><span class="br">]</span>
+
+<span class="fn">ContourPlot</span><span class="br">[</span><span class="vr">eq</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span>,
+  <span class="pp">PlotPoints</span> <span class="op">-></span> <span class="nm">150</span><span class="br">]</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Here $h^2-ab=36-(1)(-4)=40>0$, classifying this as a hyperbola. The center is found by setting both partial derivatives to zero and solving: gives $(0, 0.5)$.</p><p>Shifting the origin to the center eliminates linear terms. The coefficient matrix $\\begin{pmatrix}1&6\\\\6&-4\\end{pmatrix}$ has eigenvalues $5$ and $-8$ — these become the new quadratic coefficients after rotating axes to align with the eigenvectors. The resulting equation $5X^2-8Y^2=-10$ rearranges to the standard form shown.</p>" data-bn="<p>এখানে $h^2-ab=36-(1)(-4)=40>0$, তাই এটি একটি অধিবৃত্ত। আংশিক অন্তরকলন শূন্য রেখে সমাধান করলে কেন্দ্র $(0, 0.5)$ পাওয়া যায়।</p><p>মূলবিন্দু কেন্দ্রে স্থানান্তর করলে একঘাত পদ দূর হয়। সহগ ম্যাট্রিক্স $\\begin{pmatrix}1&6\\\\6&-4\\end{pmatrix}$-এর আইগেনমান $5$ ও $-8$ — অক্ষ ঘূর্ণনের পর এগুলো নতুন দ্বিঘাত সহগ হয়। ফলাফল $5X^2-8Y^2=-10$ থেকে আদর্শ রূপ পাওয়া যায়।</p>"><p>Here $h^2-ab=36-(1)(-4)=40>0$, classifying this as a hyperbola. The center is found by setting both partial derivatives to zero and solving: gives $(0, 0.5)$.</p><p>Shifting the origin to the center eliminates linear terms. The coefficient matrix $\begin{pmatrix}1&6\\6&-4\end{pmatrix}$ has eigenvalues $5$ and $-8$ — these become the new quadratic coefficients after rotating axes to align with the eigenvectors. The resulting equation $5X^2-8Y^2=-10$ rearranges to the standard form shown.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q2(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q2(ক)</span>
+    <span class="qtitle" data-en="Partial Derivatives" data-bn="আংশিক অন্তরজ">Partial Derivatives</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="For $f(x,y)=x^2 e^{xy}$, find all first and second partial derivatives." data-bn="$f(x,y)=x^2 e^{xy}$ ফাংশনের প্রথম ও দ্বিতীয় আংশিক অন্তরজ নির্ণয় কর।">For $f(x,y)=x^2 e^{xy}$, find all first and second partial derivatives.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box">$$f_x = e^{xy}(2x+x^2y),\quad f_y = x^3 e^{xy}$$ $$f_{xx} = e^{xy}(2+4xy+x^2y^2),\quad f_{yy}=x^4 e^{xy},\quad f_{xy}=e^{xy}(3x^2+x^3y)$$</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span> <span class="vr">y</span><span class="br">]</span>
+
+<span class="vr">fx</span>  <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>        <span class="op">//</span> <span class="fn">Simplify</span>
+<span class="vr">fy</span>  <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">y</span><span class="br">]</span>        <span class="op">//</span> <span class="fn">Simplify</span>
+<span class="vr">fxx</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">2</span><span class="br">}</span><span class="br">]</span>   <span class="op">//</span> <span class="fn">Simplify</span>
+<span class="vr">fyy</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">2</span><span class="br">}</span><span class="br">]</span>   <span class="op">//</span> <span class="fn">Simplify</span>
+<span class="vr">fxy</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>    <span class="op">//</span> <span class="fn">Simplify</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>For $f_x$, use the product rule treating $y$ as constant: $\\frac{\\partial}{\\partial x}(x^2)\\cdot e^{xy} + x^2\\cdot\\frac{\\partial}{\\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$. For $f_y$, $x$ is constant, so only $e^{xy}$ differentiates: $x^2\\cdot xe^{xy}=x^3e^{xy}$.</p><p>Second derivatives repeat the same process on each first derivative. Clairaut's theorem guarantees $f_{xy}=f_{yx}$ since $f$ is smooth everywhere.</p>" data-bn="<p>$f_x$-এর জন্য $y$-কে ধ্রুবক ধরে গুণ-নিয়ম ব্যবহার করি: $\\frac{\\partial}{\\partial x}(x^2)\\cdot e^{xy} + x^2\\cdot\\frac{\\partial}{\\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$। $f_y$-তে $x$ ধ্রুবক, তাই শুধু $e^{xy}$ অন্তরিত হয়: $x^2\\cdot xe^{xy}=x^3e^{xy}$।</p><p>দ্বিতীয় অন্তরজগুলো একইভাবে প্রথম অন্তরজের উপর পুনরায় অন্তরকলন। ক্লেরোর উপপাদ্য অনুসারে $f_{xy}=f_{yx}$, কারণ $f$ সর্বত্র মসৃণ।</p>"><p>For $f_x$, use the product rule treating $y$ as constant: $\frac{\partial}{\partial x}(x^2)\cdot e^{xy} + x^2\cdot\frac{\partial}{\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$. For $f_y$, $x$ is constant, so only $e^{xy}$ differentiates: $x^2\cdot xe^{xy}=x^3e^{xy}$.</p><p>Second derivatives repeat the same process on each first derivative. Clairaut's theorem guarantees $f_{xy}=f_{yx}$ since $f$ is smooth everywhere.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q2(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q2(খ)</span>
+    <span class="qtitle" data-en="Continuity at Origin" data-bn="মূলবিন্দুতে অবিচ্ছিন্নতা">Continuity at Origin</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Show that $f(x,y)=\\frac{xy(x^2-y^2)}{x^2+y^2}$ for $(x,y)\\neq(0,0)$, $f(0,0)=0$, is continuous at the origin." data-bn="দেখাও যে $f(x,y)=\\frac{xy(x^2-y^2)}{x^2+y^2}$, $(x,y)\\neq(0,0)$ এবং $f(0,0)=0$, ফাংশনটি $(0,0)$ বিন্দুতে অবিচ্ছিন্ন।">Show that $f(x,y)=\frac{xy(x^2-y^2)}{x^2+y^2}$ for $(x,y)\neq(0,0)$, $f(0,0)=0$, is continuous at the origin.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="The limit as $(x,y)\\to(0,0)$ equals $0 = f(0,0)$ — <span class='final'>continuous at the origin</span>." data-bn="$(x,y)\\to(0,0)$ হলে সীমামান $= 0 = f(0,0)$ — <span class='final'>মূলবিন্দুতে অবিচ্ছিন্ন</span>।">The limit as $(x,y)\to(0,0)$ equals $0 = f(0,0)$ — <span class="final">continuous at the origin</span>.</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="br">(</span><span class="vr">x</span> <span class="vr">y</span> <span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span>;
+
+<span class="cm">(* Polar substitution to show bound *)</span>
+<span class="vr">polar</span> <span class="op">=</span> <span class="fn">f</span><span class="br">[</span><span class="vr">r</span> <span class="fn">Cos</span><span class="br">[</span><span class="vr">t</span><span class="br">]</span>, <span class="vr">r</span> <span class="fn">Sin</span><span class="br">[</span><span class="vr">t</span><span class="br">]</span><span class="br">]</span> <span class="op">//</span> <span class="fn">Simplify</span>
+<span class="fn">Limit</span><span class="br">[</span><span class="vr">polar</span>, <span class="vr">r</span> <span class="op">-></span> <span class="nm">0</span><span class="br">]</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Switching to polar coordinates $x=r\\cos\\theta,\\ y=r\\sin\\theta$ transforms the function into $r^2\\cos\\theta\\sin\\theta(\\cos^2\\theta-\\sin^2\\theta)$. The angular factor is bounded between $-1$ and $1$ regardless of $\\theta$.</p><p>So $|f|\\le r^2$, and as $r\\to0$ from any direction, $r^2\\to0$ forces the function to $0$, matching $f(0,0)=0$. This direction-independence is exactly what continuity requires.</p>" data-bn="<p>পোলার স্থানাঙ্কে $x=r\\cos\\theta,\\ y=r\\sin\\theta$ বসালে ফাংশনটি $r^2\\cos\\theta\\sin\\theta(\\cos^2\\theta-\\sin^2\\theta)$ হয়। কৌণিক অংশ $\\theta$-র যেকোনো মানের জন্য $-1$ ও $1$-এর মধ্যে সীমাবদ্ধ।</p><p>অতএব $|f|\\le r^2$, এবং $r\\to0$ হলে যেকোনো দিক থেকেই $r^2\\to0$, ফলে ফাংশনের মান $0$-তে যায় যা $f(0,0)=0$-এর সমান। এই দিক-নিরপেক্ষতাই অবিচ্ছিন্নতার শর্ত।</p>"><p>Switching to polar coordinates $x=r\cos\theta,\ y=r\sin\theta$ transforms the function into $r^2\cos\theta\sin\theta(\cos^2\theta-\sin^2\theta)$. The angular factor is bounded between $-1$ and $1$ regardless of $\theta$.</p><p>So $|f|\le r^2$, and as $r\to0$ from any direction, $r^2\to0$ forces the function to $0$, matching $f(0,0)=0$. This direction-independence is exactly what continuity requires.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q3 ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q3</span>
+    <span class="qtitle" data-en="Three Initial Value Problems" data-bn="তিনটি আদিমান সমস্যা">Three Initial Value Problems</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Solve and plot:<br>(i) $y''-7y'+10y=0,\\ y(0)=0,\\ y'(0)=3$<br>(ii) $y''+4y=2\\sin2x,\\ y(0)=0,\\ y'(0)=0$<br>(iii) $(x^2-y^2)dx-xy\\,dy=0,\\ y(1)=1$" data-bn="সমাধান কর ও চিত্র অঙ্কন কর:<br>(i) $y''-7y'+10y=0,\\ y(0)=0,\\ y'(0)=3$<br>(ii) $y''+4y=2\\sin2x,\\ y(0)=0,\\ y'(0)=0$<br>(iii) $(x^2-y^2)dx-xy\\,dy=0,\\ y(1)=1$">Solve and plot:<br>(i) $y''-7y'+10y=0,\ y(0)=0,\ y'(0)=3$<br>(ii) $y''+4y=2\sin2x,\ y(0)=0,\ y'(0)=0$<br>(iii) $(x^2-y^2)dx-xy\,dy=0,\ y(1)=1$</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box"><span class="final">(i)</span> $y=e^{5x}-e^{2x}$ &nbsp;&nbsp; <span class="final">(ii)</span> $y=\frac{1}{4}\sin2x-\frac{x}{2}\cos2x$ &nbsp;&nbsp; <span class="final">(iii)</span> $x^4-2x^2y^2=-1$</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* (i) Constant-coefficient homogeneous ODE *)</span>
+<span class="vr">sol1</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">7</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">10</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>,
+  <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">3</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="fn">Plot</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol1</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* (ii) Resonant forced oscillator *)</span>
+<span class="vr">sol2</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">2</span> <span class="fn">Sin</span><span class="br">[</span><span class="nm">2</span> <span class="vr">x</span><span class="br">]</span>,
+  <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="fn">Plot</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol2</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">6</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* (iii) Homogeneous first-order ODE *)</span>
+<span class="vr">sol3</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span> <span class="op">-</span> <span class="vr">x</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>,
+  <span class="vr">y</span><span class="br">[</span><span class="nm">1</span><span class="br">]</span> <span class="op">==</span> <span class="nm">1</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="fn">Plot</span><span class="br">[</span><span class="fn">Evaluate</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol3</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0.2</span>, <span class="nm">3</span><span class="br">}</span><span class="br">]</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p><b>(i)</b> Characteristic equation $r^2-7r+10=0$ factors as $(r-2)(r-5)=0$, giving $y=C_1e^{2x}+C_2e^{5x}$. From $y(0)=0$: $C_1+C_2=0$. From $y'(0)=3$: $2C_1+5C_2=3$. Solving: $C_1=-1,\\ C_2=1$.</p><p><b>(ii)</b> The natural frequency $\\omega=2$ matches the forcing $2\\sin2x$ — resonance. The particular solution must take the form $y_p=x(A\\cos2x+B\\sin2x)$. Substituting into the ODE gives $A=-1/2,\\ B=0$. Initial conditions fix the homogeneous part.</p><p><b>(iii)</b> The ODE is homogeneous in $x,y$. Substituting $y=vx$ reduces it to a separable equation. Integrating and applying $y(1)=1$ yields the implicit solution $x^4-2x^2y^2=-1$.</p>" data-bn="<p><b>(i)</b> বৈশিষ্ট্যিক সমীকরণ $r^2-7r+10=0$ থেকে $(r-2)(r-5)=0$, অর্থাৎ $y=C_1e^{2x}+C_2e^{5x}$। $y(0)=0$ থেকে $C_1+C_2=0$। $y'(0)=3$ থেকে $2C_1+5C_2=3$। সমাধান: $C_1=-1,\\ C_2=1$।</p><p><b>(ii)</b> স্বাভাবিক কম্পাঙ্ক $\\omega=2$ বলবিধির $2\\sin2x$-এর সাথে মিলে যায় — অনুনাদ ঘটে। বিশেষ সমাধান $y_p=x(A\\cos2x+B\\sin2x)$ ধরতে হয়। ODE-তে বসিয়ে $A=-1/2,\\ B=0$ পাওয়া যায়। আদি শর্ত থেকে সমসত্ত্ব অংশ নির্ণীত হয়।</p><p><b>(iii)</b> ODE টি $x,y$-তে সমসত্ত্ব। $y=vx$ প্রতিস্থাপন করলে পৃথকযোগ্য সমীকরণ পাওয়া যায়। যোগকলন করে $y(1)=1$ শর্ত প্রয়োগ করলে অন্তর্নিহিত সমাধান $x^4-2x^2y^2=-1$।</p>"><p><b>(i)</b> Characteristic equation $r^2-7r+10=0$ factors as $(r-2)(r-5)=0$, giving $y=C_1e^{2x}+C_2e^{5x}$. From $y(0)=0$: $C_1+C_2=0$. From $y'(0)=3$: $2C_1+5C_2=3$. Solving: $C_1=-1,\ C_2=1$.</p><p><b>(ii)</b> The natural frequency $\omega=2$ matches the forcing $2\sin2x$ — resonance. The particular solution must take the form $y_p=x(A\cos2x+B\sin2x)$. Substituting into the ODE gives $A=-1/2,\ B=0$. Initial conditions fix the homogeneous part.</p><p><b>(iii)</b> The ODE is homogeneous in $x,y$. Substituting $y=vx$ reduces it to a separable equation. Integrating and applying $y(1)=1$ yields the implicit solution $x^4-2x^2y^2=-1$.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q4(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q4(ক)</span>
+    <span class="qtitle" data-en="Bisection Method" data-bn="দ্বিখণ্ডন পদ্ধতি">Bisection Method</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using the bisection method, find a root of $\\cos x - 1.3x = 0$ correct to three decimal places." data-bn="Bisection পদ্ধতি ব্যবহার করে $\\cos x - 1.3x = 0$ সমীকরণের একটি মূল তিন দশমিক স্থান পর্যন্ত নির্ণয় কর।">Using the bisection method, find a root of $\cos x - 1.3x = 0$ correct to three decimal places.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Root ≈ <span class='final'>0.624</span>" data-bn="মূল ≈ <span class='final'>0.624</span>">Root ≈ <span class="final">0.624</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Cos</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">1.3</span> <span class="vr">x</span>;
+<span class="vr">a</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">1</span>;
+<span class="kw">While</span><span class="br">[</span><span class="fn">Abs</span><span class="br">[</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">]</span> <span class="op">></span> <span class="nm">0.0005</span>,
+  <span class="vr">c</span> <span class="op">=</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span>;
+  <span class="kw">If</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span> <span class="fn">f</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span> <span class="op"><</span> <span class="nm">0</span>, <span class="vr">b</span> <span class="op">=</span> <span class="vr">c</span>, <span class="vr">a</span> <span class="op">=</span> <span class="vr">c</span><span class="br">]</span>
+<span class="br">]</span>;
+<span class="vr">root</span> <span class="op">=</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span> <span class="op">//</span> <span class="fn">N</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>$f(0)=1>0$ and $f(1)\\approx-0.76<0$, so a root exists in $(0,1)$ by the Intermediate Value Theorem. Each iteration bisects the interval and keeps the half where the sign change persists. After about 11 iterations, the interval shrinks below $0.0005$, giving three-decimal accuracy.</p>" data-bn="<p>$f(0)=1>0$ এবং $f(1)\\approx-0.76<0$, তাই মধ্যবর্তী মান উপপাদ্য অনুসারে $(0,1)$ ব্যবধানে একটি মূল আছে। প্রতিটি পুনরাবৃত্তিতে ব্যবধান অর্ধেক করা হয় এবং চিহ্ন-পরিবর্তনসহ অর্ধাংশ রাখা হয়। প্রায় ১১ পুনরাবৃত্তির পর ব্যবধান $0.0005$-এর নিচে নামে, ফলে তিন দশমিক নির্ভুলতা পাওয়া যায়।</p>"><p>$f(0)=1>0$ and $f(1)\approx-0.76<0$, so a root exists in $(0,1)$ by the Intermediate Value Theorem. Each iteration bisects the interval and keeps the half where the sign change persists. After about 11 iterations, the interval shrinks below $0.0005$, giving three-decimal accuracy.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q4(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q4(খ)</span>
+    <span class="qtitle" data-en="Simpson's 1/3 Rule" data-bn="সিম্পসনের ১/৩ নিয়ম">Simpson's 1/3 Rule</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using Simpson's 1/3 rule, write Mathematica code to evaluate $\\displaystyle\\int_0^1 e^{x^2}\\,dx$." data-bn="সিম্পসনের $\\frac{1}{3}$ নিয়ম ব্যবহার করে $\\displaystyle\\int_0^1 e^{x^2}\\,dx$ এর মান নির্ণয়ের জন্য Mathematica কোড লেখ।">Using Simpson's 1/3 rule, write Mathematica code to evaluate $\displaystyle\int_0^1 e^{x^2}\,dx$.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box">$\displaystyle\int_0^1 e^{x^2}\,dx \approx$ <span class="final">1.4627</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span><span class="br">]</span>;
+<span class="vr">n</span> <span class="op">=</span> <span class="nm">10</span>; <span class="vr">a</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">1</span>; <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span><span class="op">/</span><span class="vr">n</span>;
+<span class="vr">xs</span> <span class="op">=</span> <span class="fn">Table</span><span class="br">[</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">i</span><span class="op">*</span><span class="vr">h</span>, <span class="br">{</span><span class="vr">i</span>, <span class="nm">0</span>, <span class="vr">n</span><span class="br">}</span><span class="br">]</span>;
+<span class="vr">ys</span> <span class="op">=</span> <span class="fn">f</span> <span class="op">/@</span> <span class="vr">xs</span>;
+
+<span class="vr">integral</span> <span class="op">=</span> <span class="br">(</span><span class="vr">h</span><span class="op">/</span><span class="nm">3</span><span class="br">)</span><span class="op">*</span><span class="br">(</span><span class="vr">ys</span><span class="br">[[</span><span class="nm">1</span><span class="br">]]</span> <span class="op">+</span> <span class="vr">ys</span><span class="br">[[</span><span class="nm">-1</span><span class="br">]]</span> <span class="op">+</span>
+     <span class="nm">4</span><span class="op">*</span><span class="fn">Total</span><span class="br">[</span><span class="vr">ys</span><span class="br">[[</span><span class="fn">Range</span><span class="br">[</span><span class="nm">2</span>, <span class="vr">n</span>, <span class="nm">2</span><span class="br">]</span><span class="br">]]</span><span class="br">]</span> <span class="op">+</span>
+     <span class="nm">2</span><span class="op">*</span><span class="fn">Total</span><span class="br">[</span><span class="vr">ys</span><span class="br">[[</span><span class="fn">Range</span><span class="br">[</span><span class="nm">3</span>, <span class="vr">n</span> <span class="op">-</span> <span class="nm">1</span>, <span class="nm">2</span><span class="br">]</span><span class="br">]]</span><span class="br">]</span><span class="br">)</span>;
+
+<span class="fn">Print</span><span class="br">[</span><span class="st">"Simpson's 1/3 = "</span>, <span class="vr">integral</span><span class="br">]</span>
+<span class="fn">Print</span><span class="br">[</span><span class="st">"NIntegrate   = "</span>, <span class="fn">NIntegrate</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span><span class="br">]</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. Since $e^{x^2}$ has no elementary antiderivative, numerical integration is the standard approach.</p>" data-bn="<p>সিম্পসনের ১/৩ নিয়ম পরপর তিনটি বিন্দুর মধ্য দিয়ে পরাবৃত্ত (parabola) ফিট করে। $n=10$ (জোড় সংখ্যা আবশ্যক) নিয়ে সূত্রটি প্রান্তবিন্দুকে ১, বিজোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ৪, এবং জোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ২ দিয়ে গুণ করে, সবটা $h/3$ দিয়ে স্কেল করা হয়। $e^{x^2}$-এর কোনো সাধারণ প্রতি-অন্তরজ নেই, তাই সংখ্যাসূচক সমাকলন প্রমিত পদ্ধতি।</p>"><p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. Since $e^{x^2}$ has no elementary antiderivative, numerical integration is the standard approach.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q5(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q5(ক)</span>
+    <span class="qtitle" data-en="Cramer's Rule" data-bn="ক্রেমারের নিয়ম">Cramer's Rule</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using Cramer's rule, solve: $2x+y+z=7,\\quad x-4y+3z=2,\\quad 3x+2y+2z=13$" data-bn="ক্রেমারের নিয়ম ব্যবহার করে সমাধান কর: $2x+y+z=7,\\quad x-4y+3z=2,\\quad 3x+2y+2z=13$">Using Cramer's rule, solve: $2x+y+z=7,\quad x-4y+3z=2,\quad 3x+2y+2z=13$</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box"><span class="final">x = 1, &nbsp; y = 2, &nbsp; z = 3</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="vr">A</span> <span class="op">=</span> <span class="br">{{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">1</span><span class="br">}</span>, <span class="br">{</span><span class="nm">1</span>, <span class="nm">-4</span>, <span class="nm">3</span><span class="br">}</span>, <span class="br">{</span><span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">2</span><span class="br">}}</span>;
+<span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">7</span>, <span class="nm">2</span>, <span class="nm">13</span><span class="br">}</span>;
+
+<span class="vr">D0</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">A</span><span class="br">]</span>;
+<span class="vr">Ax</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Ax</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">1</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dx</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Ax</span><span class="br">]</span>;
+<span class="vr">Ay</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Ay</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">2</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dy</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Ay</span><span class="br">]</span>;
+<span class="vr">Az</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Az</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">3</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dz</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Az</span><span class="br">]</span>;
+
+<span class="br">{</span><span class="vr">Dx</span>, <span class="vr">Dy</span>, <span class="vr">Dz</span><span class="br">}</span><span class="op">/</span><span class="vr">D0</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Cramer's rule solves $Ax=b$ by replacing one column of $A$ at a time with $b$ and comparing determinants. Here $\\det(A)=-7$, and replacing the 1st, 2nd, 3rd columns gives $D_x=-7,\\ D_y=-14,\\ D_z=-21$. Dividing each by $D_0=-7$ yields $x=1, y=2, z=3$.</p>" data-bn="<p>ক্রেমারের নিয়মে $Ax=b$ সমাধানের জন্য $A$-এর একটি করে কলাম $b$ দিয়ে প্রতিস্থাপন করে নির্ণায়কের অনুপাত নেওয়া হয়। এখানে $\\det(A)=-7$, এবং ১ম, ২য়, ৩য় কলাম প্রতিস্থাপনে $D_x=-7,\\ D_y=-14,\\ D_z=-21$। প্রতিটিকে $D_0=-7$ দিয়ে ভাগ করলে $x=1, y=2, z=3$ পাওয়া যায়।</p>"><p>Cramer's rule solves $Ax=b$ by replacing one column of $A$ at a time with $b$ and comparing determinants. Here $\det(A)=-7$, and replacing the 1st, 2nd, 3rd columns gives $D_x=-7,\ D_y=-14,\ D_z=-21$. Dividing each by $D_0=-7$ yields $x=1, y=2, z=3$.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q5(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q5(খ)</span>
+    <span class="qtitle" data-en="Right-angled Triangle from Vectors" data-bn="ভেক্টর থেকে সমকোণী ত্রিভুজ">Right-angled Triangle from Vectors</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Show that $\\vec a=3\\hat i-2\\hat j+\\hat k$, $\\vec b=\\hat i-3\\hat j+5\\hat k$, $\\vec c=2\\hat i+\\hat j-4\\hat k$ form the sides of a right-angled triangle." data-bn="দেখাও যে $\\vec a=3\\hat i-2\\hat j+\\hat k$, $\\vec b=\\hat i-3\\hat j+5\\hat k$, $\\vec c=2\\hat i+\\hat j-4\\hat k$ ভেক্টরগুলো একটি সমকোণী ত্রিভুজের বাহু গঠন করে।">Show that $\vec a=3\hat i-2\hat j+\hat k$, $\vec b=\hat i-3\hat j+5\hat k$, $\vec c=2\hat i+\hat j-4\hat k$ form the sides of a right-angled triangle.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="$\\vec a\\cdot\\vec c=0$ (perpendicular) and $|\\vec a|^2+|\\vec c|^2=14+21=35=|\\vec b|^2$ — <span class='final'>right triangle confirmed</span>." data-bn="$\\vec a\\cdot\\vec c=0$ (লম্ব) এবং $|\\vec a|^2+|\\vec c|^2=14+21=35=|\\vec b|^2$ — <span class='final'>সমকোণী ত্রিভুজ প্রমাণিত</span>।">$\vec a\cdot\vec c=0$ (perpendicular) and $|\vec a|^2+|\vec c|^2=14+21=35=|\vec b|^2$ — <span class="final">right triangle confirmed</span>.</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="vr">a</span> <span class="op">=</span> <span class="br">{</span><span class="nm">3</span>, <span class="nm">-2</span>, <span class="nm">1</span><span class="br">}</span>; <span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">1</span>, <span class="nm">-3</span>, <span class="nm">5</span><span class="br">}</span>; <span class="vr">c</span> <span class="op">=</span> <span class="br">{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">-4</span><span class="br">}</span>;
+
+<span class="vr">a</span> <span class="op">-</span> <span class="vr">b</span> <span class="op">==</span> <span class="vr">c</span>               <span class="cm">(* True — they close into a triangle *)</span>
+<span class="vr">a</span><span class="op">.</span><span class="vr">c</span>                       <span class="cm">(* 0 — perpendicular *)</span>
+<span class="br">{</span><span class="fn">Norm</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>, <span class="fn">Norm</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>, <span class="fn">Norm</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span><span class="br">}</span> <span class="cm">(* {14, 21, 35} *)</span>
+<span class="fn">Norm</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">==</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>  <span class="cm">(* True *)</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>First, $\\vec a-\\vec b = \\vec c$ confirms the three vectors close into a triangle when placed head-to-tail. The dot product $\\vec a\\cdot\\vec c = 6-2-4 = 0$ proves sides $\\vec a$ and $\\vec c$ are perpendicular. Finally, $|\\vec a|^2+|\\vec c|^2 = 14+21 = 35 = |\\vec b|^2$ satisfies the Pythagorean theorem, independently confirming the right angle with $\\vec b$ as hypotenuse.</p>" data-bn="<p>প্রথমে, $\\vec a-\\vec b = \\vec c$ প্রমাণ করে ভেক্টর তিনটি মাথায়-লেজে রাখলে একটি ত্রিভুজ তৈরি করে। ডট গুণফল $\\vec a\\cdot\\vec c = 6-2-4 = 0$ দেখায় $\\vec a$ ও $\\vec c$ বাহু পরস্পর লম্ব। সবশেষে, $|\\vec a|^2+|\\vec c|^2 = 14+21 = 35 = |\\vec b|^2$ পীথাগোরাসের উপপাদ্য মেনে চলে, যেখানে $\\vec b$ অতিভুজ।</p>"><p>First, $\vec a-\vec b = \vec c$ confirms the three vectors close into a triangle when placed head-to-tail. The dot product $\vec a\cdot\vec c = 6-2-4 = 0$ proves sides $\vec a$ and $\vec c$ are perpendicular. Finally, $|\vec a|^2+|\vec c|^2 = 14+21 = 35 = |\vec b|^2$ satisfies the Pythagorean theorem, independently confirming the right angle with $\vec b$ as hypotenuse.</p></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--                 SECTION খ — FORTRAN                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-head">
+  <span class="section-tag">Section খ</span>
+  <span class="section-title">Fortran Programming</span>
+  <span class="section-line"></span>
+</div>
+
+<!-- ─── Q6(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q6(ক)</span>
+    <span class="qtitle" data-en="Newton–Raphson Method" data-bn="নিউটন-রাফসন পদ্ধতি">Newton–Raphson Method</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using Newton–Raphson's method, find a root of $x^3-x-1=0$ correct to three decimal places." data-bn="Newton-Raphson পদ্ধতি ব্যবহার করে $x^3-x-1=0$ সমীকরণের মূল তিন দশমিক স্থান পর্যন্ত নির্ণয় কর।">Using Newton–Raphson's method, find a root of $x^3-x-1=0$ correct to three decimal places.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Root ≈ <span class='final'>1.325</span>" data-bn="মূল ≈ <span class='final'>1.325</span>">Root ≈ <span class="final">1.325</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">newton_raphson</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x0</span>, <span class="vr">x1</span>, <span class="vr">f</span>, <span class="vr">fd</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="vr">x0</span> <span class="op">=</span> <span class="nm">1.5</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">50</span>
+        <span class="vr">f</span>  <span class="op">=</span> <span class="vr">x0</span><span class="op">**</span><span class="nm">3</span> <span class="op">-</span> <span class="vr">x0</span> <span class="op">-</span> <span class="nm">1.0</span>
+        <span class="vr">fd</span> <span class="op">=</span> <span class="nm">3.0</span><span class="op">*</span><span class="vr">x0</span><span class="op">**</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">1.0</span>
+        <span class="vr">x1</span> <span class="op">=</span> <span class="vr">x0</span> <span class="op">-</span> <span class="vr">f</span><span class="op">/</span><span class="vr">fd</span>
+        <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">x1</span> <span class="op">-</span> <span class="vr">x0</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">exit</span>
+        <span class="vr">x0</span> <span class="op">=</span> <span class="vr">x1</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x1</span>
+<span class="kw">end program</span> <span class="fn">newton_raphson</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Starting from $x_0=1.5$, each step applies $x_{n+1}=x_n - f(x_n)/f'(x_n)$, where $f(x)=x^3-x-1$ and $f'(x)=3x^2-1$. Newton–Raphson converges quadratically near a simple root, so only a few iterations are needed to reach three-decimal accuracy.</p>" data-bn="<p>$x_0=1.5$ থেকে শুরু করে প্রতিটি ধাপে $x_{n+1}=x_n - f(x_n)/f'(x_n)$ প্রয়োগ করা হয়, যেখানে $f(x)=x^3-x-1$ এবং $f'(x)=3x^2-1$। নিউটন-রাফসন পদ্ধতি সরল মূলের কাছে দ্বিঘাত হারে অভিসারী হয়, তাই মাত্র কয়েকটি পুনরাবৃত্তিতেই তিন দশমিক নির্ভুলতা পাওয়া যায়।</p>"><p>Starting from $x_0=1.5$, each step applies $x_{n+1}=x_n - f(x_n)/f'(x_n)$, where $f(x)=x^3-x-1$ and $f'(x)=3x^2-1$. Newton–Raphson converges quadratically near a simple root, so only a few iterations are needed to reach three-decimal accuracy.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q6(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q6(খ)</span>
+    <span class="qtitle" data-en="Fixed Point Iteration" data-bn="স্থিরবিন্দু পুনরাবৃত্তি">Fixed Point Iteration</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using fixed point iteration, find a real root of $x - \\cos x = 0$." data-bn="Fixed point iteration পদ্ধতিতে $x - \\cos x = 0$ এর একটি বাস্তব মূল নির্ণয় কর।">Using fixed point iteration, find a real root of $x - \cos x = 0$.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Root ≈ <span class='final'>0.739</span> (the Dottie number)" data-bn="মূল ≈ <span class='final'>0.739</span> (ডটি সংখ্যা)">Root ≈ <span class="final">0.739</span> (the Dottie number)</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">fixed_point</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x0</span>, <span class="vr">x1</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="vr">x0</span> <span class="op">=</span> <span class="nm">0.5</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">100</span>
+        <span class="vr">x1</span> <span class="op">=</span> <span class="fn">cos</span><span class="br">(</span><span class="vr">x0</span><span class="br">)</span>
+        <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">x1</span> <span class="op">-</span> <span class="vr">x0</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">exit</span>
+        <span class="vr">x0</span> <span class="op">=</span> <span class="vr">x1</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x1</span>
+<span class="kw">end program</span> <span class="fn">fixed_point</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Rearranging $x-\\cos x=0$ as $x=\\cos x$ turns root-finding into repeatedly applying $x_{n+1}=\\cos(x_n)$. Since $|g'(x)|=|\\sin x|<1$ near the root, the fixed-point condition holds and convergence is guaranteed.</p>" data-bn="<p>$x-\\cos x=0$ কে $x=\\cos x$ আকারে লিখলে মূল-নির্ণয় $x_{n+1}=\\cos(x_n)$ বারবার প্রয়োগে পরিণত হয়। যেহেতু মূলের কাছে $|g'(x)|=|\\sin x|<1$, স্থিরবিন্দুর শর্ত পূরণ হয় এবং অভিসারিতা নিশ্চিত।</p>"><p>Rearranging $x-\cos x=0$ as $x=\cos x$ turns root-finding into repeatedly applying $x_{n+1}=\cos(x_n)$. Since $|g'(x)|=|\sin x|<1$ near the root, the fixed-point condition holds and convergence is guaranteed.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q7(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q7(ক)</span>
+    <span class="qtitle" data-en="Weddle's Rule" data-bn="ওয়েডলের নিয়ম">Weddle's Rule</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Dividing into 6 parts, use Weddle's rule to evaluate $\\displaystyle\\int_a^b \\frac{dx}{1+x^2}$." data-bn="৬ ভাগে বিভক্ত করে Weddle's rule-এর সাহায্যে $\\displaystyle\\int_a^b \\frac{dx}{1+x^2}$ এর মান নির্ণয় কর।">Dividing into 6 parts, use Weddle's rule to evaluate $\displaystyle\int_a^b \frac{dx}{1+x^2}$.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="With $a=0, b=6$: integral ≈ <span class='final'>1.3734</span> (exact $\\arctan6 \\approx 1.4056$)" data-bn="$a=0, b=6$ ধরলে: সমাকল ≈ <span class='final'>1.3734</span> (সঠিক মান $\\arctan6 \\approx 1.4056$)">With $a=0, b=6$: integral ≈ <span class="final">1.3734</span> (exact $\arctan6 \approx 1.4056$)</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">weddle_rule</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">a</span>, <span class="vr">b</span>, <span class="vr">h</span>, <span class="vr">x</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">y</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">s</span>, <span class="vr">integral</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="vr">a</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">6.0</span>
+    <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span> <span class="op">/</span> <span class="nm">6.0</span>
+
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>, <span class="nm">6</span>
+        <span class="vr">x</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">=</span> <span class="vr">a</span> <span class="op">+</span> <span class="vr">i</span><span class="op">*</span><span class="vr">h</span>
+        <span class="vr">y</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="vr">x</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="kw">end do</span>
+
+    <span class="vr">s</span> <span class="op">=</span> <span class="vr">y</span><span class="br">(</span><span class="nm">0</span><span class="br">)</span> <span class="op">+</span> <span class="nm">5.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">1</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">2</span><span class="br">)</span> <span class="op">+</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">3</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">4</span><span class="br">)</span> <span class="op">+</span> <span class="nm">5.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">5</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">6</span><span class="br">)</span>
+    <span class="vr">integral</span> <span class="op">=</span> <span class="br">(</span><span class="nm">3.0</span><span class="op">*</span><span class="vr">h</span><span class="op">/</span><span class="nm">10.0</span><span class="br">)</span> <span class="op">*</span> <span class="vr">s</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Integral = "</span>, <span class="vr">integral</span>
+<span class="kw">end program</span> <span class="fn">weddle_rule</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Weddle's rule requires exactly 6 subintervals (7 points) and applies the weighted sum $\\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$, which is exact for polynomials up to degree 5. The limits $a=0, b=6$ are used as a worked example — substitute your paper's actual limits if different.</p>" data-bn="<p>ওয়েডলের নিয়মে ঠিক ৬টি উপব্যবধান (৭ বিন্দু) প্রয়োজন এবং ভারযুক্ত যোগফল $\\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$ প্রয়োগ করা হয়, যা ৫ মাত্রার বহুপদী পর্যন্ত সঠিক। $a=0, b=6$ উদাহরণ হিসেবে ব্যবহৃত — তোমার প্রশ্নপত্রের সীমা ভিন্ন হলে প্রতিস্থাপন কর।</p>"><p>Weddle's rule requires exactly 6 subintervals (7 points) and applies the weighted sum $\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$, which is exact for polynomials up to degree 5. The limits $a=0, b=6$ are used as a worked example — substitute your paper's actual limits if different.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q7(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q7(খ)</span>
+    <span class="qtitle" data-en="Matrix Addition & Subtraction" data-bn="ম্যাট্রিক্স যোগ ও বিয়োগ">Matrix Addition & Subtraction</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Write a Fortran program to add and subtract two square matrices." data-bn="দুটি বর্গম্যাট্রিক্স যোগ এবং বিয়োগ করার জন্য একটি ফরট্রান প্রোগ্রাম লেখ।">Write a Fortran program to add and subtract two square matrices.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="General program — works for any $n \\times n$ matrices." data-bn="সাধারণ প্রোগ্রাম — যেকোনো $n \\times n$ ম্যাট্রিক্সের জন্য কাজ করবে।">General program — works for any $n \times n$ matrices.</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">matrix_add_sub</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">n</span> <span class="op">=</span> <span class="nm">3</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">C_add</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">C_sub</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">j</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter elements of A (row by row):"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter elements of B (row by row):"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+        <span class="kw">do</span> <span class="vr">j</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+            <span class="vr">C_add</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">+</span> <span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>
+            <span class="vr">C_sub</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">-</span> <span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>
+        <span class="kw">end do</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A + B ="</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+        <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C_add</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+    <span class="kw">end do</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A - B ="</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+        <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C_sub</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+    <span class="kw">end do</span>
+<span class="kw">end program</span> <span class="fn">matrix_add_sub</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Matrix addition and subtraction are element-wise: a nested loop computes $C_{add}(i,j)=A(i,j)+B(i,j)$ and $C_{sub}(i,j)=A(i,j)-B(i,j)$. The size $n=3$ is a parameter easily changed.</p>" data-bn="<p>ম্যাট্রিক্স যোগ ও বিয়োগ উপাদান-ভিত্তিক: নেস্টেড লুপে $C_{add}(i,j)=A(i,j)+B(i,j)$ এবং $C_{sub}(i,j)=A(i,j)-B(i,j)$ গণনা করা হয়। $n=3$ একটি প্যারামিটার যা সহজেই পরিবর্তনযোগ্য।</p>"><p>Matrix addition and subtraction are element-wise: a nested loop computes $C_{add}(i,j)=A(i,j)+B(i,j)$ and $C_{sub}(i,j)=A(i,j)-B(i,j)$. The size $n=3$ is a parameter easily changed.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q8 ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q8</span>
+    <span class="qtitle" data-en="Gauss–Jacobi Iteration" data-bn="গাউস-জ্যাকোবি পুনরাবৃত্তি">Gauss–Jacobi Iteration</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$" data-bn="Gauss-Jacobi পদ্ধতি ব্যবহার করে তিন দশমিক স্থান পর্যন্ত সমাধান কর: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$">Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\quad 6x+15y+2z=72,\quad x+y+54z=110$</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box"><span class="final">x ≈ 2.426, &nbsp; y ≈ 3.573, &nbsp; z ≈ 1.927</span></div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">gauss_jacobi</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">z</span>, <span class="vr">xn</span>, <span class="vr">yn</span>, <span class="vr">zn</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">z</span> <span class="op">=</span> <span class="nm">0.0</span>
+
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">100</span>
+        <span class="vr">xn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">85.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span> <span class="op">+</span> <span class="vr">z</span><span class="br">)</span>  <span class="op">/</span> <span class="nm">27.0</span>
+        <span class="vr">yn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">72.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">x</span> <span class="op">-</span> <span class="nm">2.0</span><span class="op">*</span><span class="vr">z</span><span class="br">)</span> <span class="op">/</span> <span class="nm">15.0</span>
+        <span class="vr">zn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">110.0</span> <span class="op">-</span> <span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span><span class="br">)</span>       <span class="op">/</span> <span class="nm">54.0</span>
+
+        <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">xn</span><span class="op">-</span><span class="vr">x</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">yn</span><span class="op">-</span><span class="vr">y</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">&amp;</span>
+            <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">zn</span><span class="op">-</span><span class="vr">z</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">then</span>
+            <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
+            <span class="kw">exit</span>
+        <span class="kw">end if</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"x ="</span>, <span class="vr">x</span>, <span class="st">" y ="</span>, <span class="vr">y</span>, <span class="st">" z ="</span>, <span class="vr">z</span>
+<span class="kw">end program</span> <span class="fn">gauss_jacobi</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Each equation is rearranged to isolate one variable, and all three are updated simultaneously from the previous iteration's values (Jacobi's distinguishing feature vs Gauss-Seidel). The system is diagonally dominant (27>6+1, 15>6+2, 54>1+1), guaranteeing convergence.</p>" data-bn="<p>প্রতিটি সমীকরণ এক চলকের জন্য পুনর্বিন্যাস করা হয়, এবং তিনটিই পূর্ববর্তী পুনরাবৃত্তির মান থেকে একসাথে হালনাগাদ হয় (গাউস-সাইডেলের সাথে জ্যাকোবির পার্থক্য এটাই)। সিস্টেমটি তির্যক-প্রাধান্য (27>6+1, 15>6+2, 54>1+1), তাই অভিসারিতা নিশ্চিত।</p>"><p>Each equation is rearranged to isolate one variable, and all three are updated simultaneously from the previous iteration's values (Jacobi's distinguishing feature vs Gauss-Seidel). The system is diagonally dominant (27>6+1, 15>6+2, 54>1+1), guaranteeing convergence.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q9 ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q9</span>
+    <span class="qtitle" data-en="Euler's Method" data-bn="অয়লার পদ্ধতি">Euler's Method</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Using Euler's method, solve $\\frac{dy}{dx}=x+y$, $x=0$, $y=0$, from $x=0$ to $x=1.0$ with $h=0.2$." data-bn="Euler পদ্ধতি ব্যবহার করে সমাধান কর: $\\frac{dy}{dx}=x+y$, $x=0$, $y=0$; $x=0$ থেকে $x=1.0$; $h=0.2$।">Using Euler's method, solve $\frac{dy}{dx}=x+y$, $x=0$, $y=0$, from $x=0$ to $x=1.0$ with $h=0.2$.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box">$y(1.0) \approx$ <span class="final">0.4883</span></div>
+    <table class="calc">
+      <tr><th>x</th><td>0.0</td><td>0.2</td><td>0.4</td><td>0.6</td><td>0.8</td><td>1.0</td></tr>
+      <tr><th>y</th><td>0</td><td>0</td><td>0.04</td><td>0.128</td><td>0.2736</td><td>0.4883</td></tr>
+    </table>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">euler_method</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">h</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">n</span>
+
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">h</span> <span class="op">=</span> <span class="nm">0.2</span>
+    <span class="vr">n</span> <span class="op">=</span> <span class="nm">5</span>   <span class="cm">! (1.0 - 0.0) / 0.2</span>
+
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+        <span class="vr">y</span> <span class="op">=</span> <span class="vr">y</span> <span class="op">+</span> <span class="vr">h</span> <span class="op">*</span> <span class="br">(</span><span class="vr">x</span> <span class="op">+</span> <span class="vr">y</span><span class="br">)</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="vr">x</span> <span class="op">+</span> <span class="vr">h</span>
+        <span class="fn">print</span> <span class="op">*</span>, <span class="st">"x ="</span>, <span class="vr">x</span>, <span class="st">"  y ="</span>, <span class="vr">y</span>
+    <span class="kw">end do</span>
+<span class="kw">end program</span> <span class="fn">euler_method</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Euler's method steps forward using the slope at the current point: $y_{n+1}=y_n+h\\cdot f(x_n,y_n)$, where $f(x,y)=x+y$. With $h=0.2$, five steps carry the solution from $x=0$ to $x=1.0$. Each new $y$ depends only on the immediately preceding value.</p>" data-bn="<p>অয়লার পদ্ধতি বর্তমান বিন্দুর ঢাল ব্যবহার করে সামনে এগোয়: $y_{n+1}=y_n+h\\cdot f(x_n,y_n)$, যেখানে $f(x,y)=x+y$। $h=0.2$ নিয়ে ৫ ধাপে $x=0$ থেকে $x=1.0$ পর্যন্ত সমাধান পাওয়া যায়। প্রতিটি নতুন $y$ শুধুমাত্র আগের মানের উপর নির্ভর করে।</p>"><p>Euler's method steps forward using the slope at the current point: $y_{n+1}=y_n+h\cdot f(x_n,y_n)$, where $f(x,y)=x+y$. With $h=0.2$, five steps carry the solution from $x=0$ to $x=1.0$. Each new $y$ depends only on the immediately preceding value.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q10(ক) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q10(ক)</span>
+    <span class="qtitle" data-en="Largest of Ten Numbers" data-bn="দশটি সংখ্যার মধ্যে বৃহত্তম">Largest of Ten Numbers</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Write a Fortran program to find the largest number among ten given numbers." data-bn="দশটি সংখ্যা থেকে বৃহত্তম সংখ্যাটি নির্ণয়ের জন্য একটি ফরট্রান প্রোগ্রাম লেখ।">Write a Fortran program to find the largest number among ten given numbers.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Single-pass comparison finds the maximum." data-bn="একক-পাসে তুলনা করে সর্বোচ্চ মান নির্ণয়।">Single-pass comparison finds the maximum.</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">largest_number</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">num</span><span class="br">(</span><span class="nm">10</span><span class="br">)</span>, <span class="vr">largest</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter 10 numbers:"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="nm">10</span><span class="br">)</span>
+
+    <span class="vr">largest</span> <span class="op">=</span> <span class="vr">num</span><span class="br">(</span><span class="nm">1</span><span class="br">)</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">2</span>, <span class="nm">10</span>
+        <span class="kw">if</span> <span class="br">(</span><span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">></span> <span class="vr">largest</span><span class="br">)</span> <span class="vr">largest</span> <span class="op">=</span> <span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Largest = "</span>, <span class="vr">largest</span>
+<span class="kw">end program</span> <span class="fn">largest_number</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>The first element is taken as the initial guess for the maximum. Each subsequent element is compared — whenever a larger value appears, it replaces the current largest. After one pass through all ten numbers, the true maximum remains.</p>" data-bn="<p>প্রথম উপাদানকে সর্বোচ্চের প্রাথমিক অনুমান ধরা হয়। পরবর্তী প্রতিটি উপাদানের সাথে তুলনা করা হয় — যখনই বড় মান পাওয়া যায়, তা বর্তমান সর্বোচ্চকে প্রতিস্থাপন করে। দশটি সংখ্যার একবার পরিদর্শনের পর প্রকৃত সর্বোচ্চ পাওয়া যায়।</p>"><p>The first element is taken as the initial guess for the maximum. Each subsequent element is compared — whenever a larger value appears, it replaces the current largest. After one pass through all ten numbers, the true maximum remains.</p></div>
+  </div>
+</div>
+
+<!-- ─── Q10(খ) ─── -->
+<div class="qcard">
+  <div class="qcard-head">
+    <span class="qnum">Q10(খ)</span>
+    <span class="qtitle" data-en="Matrix Multiplication (3×4 by 4×5)" data-bn="ম্যাট্রিক্স গুণন (3×4 × 4×5)">Matrix Multiplication (3×4 by 4×5)</span>
+  </div>
+  <div class="qbody">
+    <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
+    <div class="qtext" data-en="Given $A$ is $3\\times4$ and $B$ is $4\\times5$, write a Fortran program to compute $C=AB$." data-bn="মনে কর $A$ একটি $3\\times4$ এবং $B$ একটি $4\\times5$ মেট্রিক্স। $C = AB$ নির্ণয়ের জন্য একটি ফরট্রান প্রোগ্রাম লেখ।">Given $A$ is $3\times4$ and $B$ is $4\times5$, write a Fortran program to compute $C=AB$.</div>
+
+    <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
+    <div class="ans-box" data-en="Result $C$ is a $3\\times5$ matrix computed via the standard triple loop." data-bn="ফলাফল $C$ একটি $3\\times5$ ম্যাট্রিক্স, প্রমিত ত্রিস্তরীয় লুপে গণনা করা হয়।">Result $C$ is a $3\times5$ matrix computed via the standard triple loop.</div>
+
+    <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
+    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">matrix_multiply</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">m</span> <span class="op">=</span> <span class="nm">3</span>, <span class="vr">n</span> <span class="op">=</span> <span class="nm">4</span>, <span class="vr">p</span> <span class="op">=</span> <span class="nm">5</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">p</span><span class="br">)</span>, <span class="vr">C</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">p</span><span class="br">)</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">j</span>, <span class="vr">k</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter A (3x4):"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">m</span><span class="br">)</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter B (4x5):"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">p</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">m</span>
+        <span class="kw">do</span> <span class="vr">j</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">p</span>
+            <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="nm">0.0</span>
+            <span class="kw">do</span> <span class="vr">k</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+                <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">+</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">k</span><span class="br">)</span> <span class="op">*</span> <span class="vr">B</span><span class="br">(</span><span class="vr">k</span>,<span class="vr">j</span><span class="br">)</span>
+            <span class="kw">end do</span>
+        <span class="kw">end do</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"C = A x B ="</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">m</span>
+        <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">p</span><span class="br">)</span>
+    <span class="kw">end do</span>
+<span class="kw">end program</span> <span class="fn">matrix_multiply</span></pre></div>
+
+    <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
+    <div class="expl" data-en="<p>Matrix multiplication is valid since $A$'s column count (4) matches $B$'s row count (4). The result is $3\\times5$. Each entry $C(i,j)$ is the dot product of row $i$ of $A$ with column $j$ of $B$, computed by the innermost loop accumulating $A(i,k)\\times B(k,j)$.</p>" data-bn="<p>$A$-এর কলাম সংখ্যা (৪) $B$-এর সারি সংখ্যার (৪) সমান বলে গুণন বৈধ। ফলাফল $3\\times5$। প্রতিটি $C(i,j)$ হলো $A$-এর $i$-তম সারি ও $B$-এর $j$-তম কলামের ডট গুণফল, যা অন্তর্তম লুপে $A(i,k)\\times B(k,j)$ যোগ করে গণনা হয়।</p>"><p>Matrix multiplication is valid since $A$'s column count (4) matches $B$'s row count (4). The result is $3\times5$. Each entry $C(i,j)$ is the dot product of row $i$ of $A$ with column $j$ of $B$, computed by the innermost loop accumulating $A(i,k)\times B(k,j)$.</p></div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function setLang(lang) {
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-bn').classList.toggle('active', lang === 'bn');
+
+  document.querySelectorAll('[data-en][data-bn]').forEach(el => {
+    const content = el.getAttribute('data-' + lang);
+    if (content !== null) {
+      el.innerHTML = content;
+    }
+  });
+
+  // Re-typeset MathJax after language switch
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise().catch(function(err) {
+      console.log('MathJax typeset error:', err);
+    });
+  }
+}
+</script>
+</body>
+</html>
