@@ -621,7 +621,7 @@ table.calc td { color: var(--text); }
     <div class="qtext" data-en="Using Simpson's 1/3 rule, write Mathematica code to evaluate $\\displaystyle\\int_0^1 e^{x^2}\\,dx$." data-bn="সিম্পসনের $\\frac{1}{3}$ নিয়ম ব্যবহার করে $\\displaystyle\\int_0^1 e^{x^2}\\,dx$ এর মান নির্ণয়ের জন্য Mathematica কোড লেখ।">Using Simpson's 1/3 rule, write Mathematica code to evaluate $\displaystyle\int_0^1 e^{x^2}\,dx$.</div>
 
     <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
-    <div class="ans-box">$\displaystyle\int_0^1 e^{x^2}\,dx \approx$ <span class="final">1.4627</span></div>
+    <div class="ans-box" data-en="Composite Simpson's $\\frac{1}{3}$ rule with $n=10$: <span class='final'>1.4627</span>.<br>Single-panel Simpson's $\\frac{1}{3}$ rule: <span class='final'>1.4757</span>." data-bn="$n=10$ সহ composite Simpson's $\\frac{1}{3}$ নিয়মে: <span class='final'>1.4627</span>।<br>Single-panel Simpson's $\\frac{1}{3}$ নিয়মে: <span class='final'>1.4757</span>।">Composite Simpson's $\frac{1}{3}$ rule with $n=10$: <span class="final">1.4627</span>.<br>Single-panel Simpson's $\frac{1}{3}$ rule: <span class="final">1.4757</span>.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
     <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
@@ -635,10 +635,12 @@ table.calc td { color: var(--text); }
      <span class="nm">2</span><span class="op">*</span><span class="fn">Total</span><span class="br">[</span><span class="vr">ys</span><span class="br">[[</span><span class="fn">Range</span><span class="br">[</span><span class="nm">3</span>, <span class="vr">n</span> <span class="op">-</span> <span class="nm">1</span>, <span class="nm">2</span><span class="br">]</span><span class="br">]]</span><span class="br">]</span><span class="br">)</span>;
 
 <span class="fn">Print</span><span class="br">[</span><span class="st">"Simpson's 1/3 = "</span>, <span class="vr">integral</span><span class="br">]</span>
+<span class="vr">singlePanel</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span><span class="op">/</span><span class="nm">6</span> <span class="op">*</span> <span class="br">(</span><span class="fn">f</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span> <span class="op">+</span> <span class="nm">4</span><span class="fn">f</span><span class="br">[</span><span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span><span class="br">]</span> <span class="op">+</span> <span class="fn">f</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="br">)</span>;
+<span class="fn">Print</span><span class="br">[</span><span class="st">"Single-panel = "</span>, <span class="vr">singlePanel</span><span class="br">]</span>
 <span class="fn">Print</span><span class="br">[</span><span class="st">"NIntegrate   = "</span>, <span class="fn">NIntegrate</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span><span class="br">]</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
-    <div class="expl" data-en="<p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. Since $e^{x^2}$ has no elementary antiderivative, numerical integration is the standard approach.</p>" data-bn="<p>সিম্পসনের ১/৩ নিয়ম পরপর তিনটি বিন্দুর মধ্য দিয়ে পরাবৃত্ত (parabola) ফিট করে। $n=10$ (জোড় সংখ্যা আবশ্যক) নিয়ে সূত্রটি প্রান্তবিন্দুকে ১, বিজোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ৪, এবং জোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ২ দিয়ে গুণ করে, সবটা $h/3$ দিয়ে স্কেল করা হয়। $e^{x^2}$-এর কোনো সাধারণ প্রতি-অন্তরজ নেই, তাই সংখ্যাসূচক সমাকলন প্রমিত পদ্ধতি।</p>"><p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. Since $e^{x^2}$ has no elementary antiderivative, numerical integration is the standard approach.</p></div>
+    <div class="expl" data-en="<p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the composite formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. If only one Simpson panel is expected, use $\\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$, which gives about $1.4757$ for this integral.</p>" data-bn="<p>সিম্পসনের ১/৩ নিয়ম পরপর তিনটি বিন্দুর মধ্য দিয়ে পরাবৃত্ত ফিট করে। $n=10$ (জোড় সংখ্যা আবশ্যক) নিয়ে composite সূত্রে প্রান্তবিন্দুকে ১, বিজোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ৪, এবং জোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ২ দিয়ে গুণ করে, সবটা $h/3$ দিয়ে স্কেল করা হয়। যদি শুধু একটি Simpson panel চাওয়া হয়, তবে $\\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$ ব্যবহার করতে হবে, যা এই সমাকলের জন্য প্রায় $1.4757$ দেয়।</p>"><p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the composite formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. If only one Simpson panel is expected, use $\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$, which gives about $1.4757$ for this integral.</p></div>
   </div>
 </div>
 
@@ -792,7 +794,7 @@ table.calc td { color: var(--text); }
     <div class="qtext" data-en="Dividing into 6 parts, use Weddle's rule to evaluate $\\displaystyle\\int_a^b \\frac{dx}{1+x^2}$." data-bn="৬ ভাগে বিভক্ত করে Weddle's rule-এর সাহায্যে $\\displaystyle\\int_a^b \\frac{dx}{1+x^2}$ এর মান নির্ণয় কর।">Dividing into 6 parts, use Weddle's rule to evaluate $\displaystyle\int_a^b \frac{dx}{1+x^2}$.</div>
 
     <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
-    <div class="ans-box" data-en="With $a=0, b=6$: integral ≈ <span class='final'>1.3734</span> (exact $\\arctan6 \\approx 1.4056$)" data-bn="$a=0, b=6$ ধরলে: সমাকল ≈ <span class='final'>1.3734</span> (সঠিক মান $\\arctan6 \\approx 1.4056$)">With $a=0, b=6$: integral ≈ <span class="final">1.3734</span> (exact $\arctan6 \approx 1.4056$)</div>
+    <div class="ans-box" data-en="Let $h=\\frac{b-a}{6}$ and $x_i=a+ih$. Weddle's rule gives $$\\int_a^b \\frac{dx}{1+x^2}\\approx \\frac{3h}{10}\\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\\right],\\quad y_i=\\frac{1}{1+x_i^2}.$$" data-bn="$h=\\frac{b-a}{6}$ এবং $x_i=a+ih$ ধরা হলে Weddle's rule অনুযায়ী $$\\int_a^b \\frac{dx}{1+x^2}\\approx \\frac{3h}{10}\\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\\right],\\quad y_i=\\frac{1}{1+x_i^2}.$$">Let $h=\frac{b-a}{6}$ and $x_i=a+ih$. Weddle's rule gives $$\int_a^b \frac{dx}{1+x^2}\approx \frac{3h}{10}\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\right],\quad y_i=\frac{1}{1+x_i^2}.$$</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
     <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
@@ -801,7 +803,8 @@ table.calc td { color: var(--text); }
     <span class="kw">real</span> <span class="op">::</span> <span class="vr">a</span>, <span class="vr">b</span>, <span class="vr">h</span>, <span class="vr">x</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">y</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">s</span>, <span class="vr">integral</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
-    <span class="vr">a</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">6.0</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter lower limit a and upper limit b:"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">a</span>, <span class="vr">b</span>
     <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span> <span class="op">/</span> <span class="nm">6.0</span>
 
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>, <span class="nm">6</span>
@@ -816,7 +819,7 @@ table.calc td { color: var(--text); }
 <span class="kw">end program</span> <span class="fn">weddle_rule</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
-    <div class="expl" data-en="<p>Weddle's rule requires exactly 6 subintervals (7 points) and applies the weighted sum $\\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$, which is exact for polynomials up to degree 5. The limits $a=0, b=6$ are used as a worked example — substitute your paper's actual limits if different.</p>" data-bn="<p>ওয়েডলের নিয়মে ঠিক ৬টি উপব্যবধান (৭ বিন্দু) প্রয়োজন এবং ভারযুক্ত যোগফল $\\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$ প্রয়োগ করা হয়, যা ৫ মাত্রার বহুপদী পর্যন্ত সঠিক। $a=0, b=6$ উদাহরণ হিসেবে ব্যবহৃত — তোমার প্রশ্নপত্রের সীমা ভিন্ন হলে প্রতিস্থাপন কর।</p>"><p>Weddle's rule requires exactly 6 subintervals (7 points) and applies the weighted sum $\frac{3h}{10}[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6]$, which is exact for polynomials up to degree 5. The limits $a=0, b=6$ are used as a worked example — substitute your paper's actual limits if different.</p></div>
+    <div class="expl" data-en="<p>Weddle's rule requires exactly 6 subintervals (7 points). Since the paper gives the limits as $a$ and $b$, the correct answer should stay in formula form or let the program read $a$ and $b$ as input.</p>" data-bn="<p>ওয়েডলের নিয়মে ঠিক ৬টি উপব্যবধান (৭ বিন্দু) প্রয়োজন। প্রশ্নপত্রে সীমা $a$ ও $b$ দেওয়া আছে, তাই সঠিক উত্তর সূত্র আকারে থাকবে অথবা প্রোগ্রামে $a$ ও $b$ ইনপুট হিসেবে নিতে হবে।</p>"><p>Weddle's rule requires exactly 6 subintervals (7 points). Since the paper gives the limits as $a$ and $b$, the correct answer should stay in formula form or let the program read $a$ and $b$ as input.</p></div>
   </div>
 </div>
 
@@ -879,7 +882,7 @@ table.calc td { color: var(--text); }
     <div class="qtext" data-en="Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$" data-bn="Gauss-Jacobi পদ্ধতি ব্যবহার করে তিন দশমিক স্থান পর্যন্ত সমাধান কর: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$">Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\quad 6x+15y+2z=72,\quad x+y+54z=110$</div>
 
     <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
-    <div class="ans-box"><span class="final">x ≈ 2.426, &nbsp; y ≈ 3.573, &nbsp; z ≈ 1.927</span></div>
+    <div class="ans-box"><span class="final">x ≈ 2.425, &nbsp; y ≈ 3.573, &nbsp; z ≈ 1.926</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
     <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
