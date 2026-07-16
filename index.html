@@ -253,6 +253,37 @@ body {
 .code-dots .d2 { background: #febc2e; }
 .code-dots .d3 { background: #28c840; }
 
+/* method switch — compact segmented toggle, two solutions per question */
+.method-switch {
+  display: inline-flex;
+  gap: 3px;
+  margin: 2px 0 12px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.method-btn {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  padding: 6px 16px;
+  min-height: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .16s, color .16s;
+}
+.method-btn:hover:not(.active) { color: var(--text-bright); }
+.method-btn.active { background: var(--accent); color: #fff; }
+.method-btn.easy.active { background: var(--green); color: #05130c; }
+
 pre.code {
   padding: 18px 20px;
   overflow-x: auto;
@@ -403,6 +434,8 @@ table.calc td { color: var(--text); }
   }
 
   .qnum { white-space: normal; }
+
+  .method-btn { font-size: 10.5px; padding: 6px 13px; }
 }
 </style>
 </head>
@@ -442,20 +475,36 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="The two lines are: <span class='final'>x − y − 1 = 0</span> and <span class='final'>x − 4y + 2 = 0</span>. Intersection point: <span class='final'>(2, 1)</span>. Angle between them: <span class='final'>arctan(3/5) ≈ 30.96°</span>" data-bn="সরলরেখা দুটি: <span class='final'>x − y − 1 = 0</span> এবং <span class='final'>x − 4y + 2 = 0</span>। ছেদবিন্দু: <span class='final'>(2, 1)</span>। মধ্যবর্তী কোণ: <span class='final'>arctan(3/5) ≈ 30.96°</span>">The two lines are: <span class="final">x − y − 1 = 0</span> and <span class="final">x − 4y + 2 = 0</span>. Intersection point: <span class="final">(2, 1)</span>. Angle between them: <span class="final">arctan(3/5) ≈ 30.96°</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="cm">(* Verify degeneracy & factor into two lines *)</span>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Store the full second-degree equation so we can reuse it in every step. *)</span>
 <span class="vr">eq</span> <span class="op">=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">5</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">2</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">2</span>;
+
+<span class="cm">(* Factor checks whether the conic splits into two straight lines. *)</span>
 <span class="fn">Factor</span><span class="br">[</span><span class="vr">eq</span><span class="br">]</span>
 
-<span class="cm">(* Solve intersection of the two lines *)</span>
+<span class="cm">(* Solve the two line equations together to get their common point. *)</span>
 <span class="vr">sol</span> <span class="op">=</span> <span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">1</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">x</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
 
-<span class="cm">(* Angle between lines *)</span>
+<span class="cm">(* Convert each line to slope form; then use tan(theta)=|(m1-m2)/(1+m1 m2)|. *)</span>
 <span class="vr">m1</span> <span class="op">=</span> <span class="nm">1</span>; <span class="vr">m2</span> <span class="op">=</span> <span class="nm">1</span><span class="op">/</span><span class="nm">4</span>;
 <span class="vr">angle</span> <span class="op">=</span> <span class="fn">ArcTan</span><span class="br">[</span><span class="fn">Abs</span><span class="br">[</span><span class="br">(</span><span class="vr">m1</span> <span class="op">-</span> <span class="vr">m2</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="nm">1</span> <span class="op">+</span> <span class="vr">m1</span><span class="op">*</span><span class="vr">m2</span><span class="br">)</span><span class="br">]</span><span class="br">]</span> <span class="op">//</span> <span class="fn">N</span>
 
-<span class="cm">(* Plot the pair of lines *)</span>
+<span class="cm">(* Draw the original equation to visually confirm the two intersecting lines. *)</span>
 <span class="fn">ContourPlot</span><span class="br">[</span><span class="vr">eq</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">-2</span>, <span class="nm">6</span><span class="br">}</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">-2</span>, <span class="nm">4</span><span class="br">}</span>, <span class="pp">PlotPoints</span> <span class="op">-></span> <span class="nm">100</span><span class="br">]</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: just Solve the equation for y — it hands back the two lines. *)</span>
+<span class="fn">Solve</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">5</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">2</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="br">]</span>
+
+<span class="cm">(* Solve the two line equations together to find where they cross. *)</span>
+<span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">1</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">x</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* Angle = difference of the two slope angles, shown in degrees. *)</span>
+<span class="br">(</span><span class="fn">ArcTan</span><span class="br">[</span><span class="nm">1</span><span class="br">]</span> <span class="op">-</span> <span class="fn">ArcTan</span><span class="br">[</span><span class="nm">1</span><span class="op">/</span><span class="nm">4</span><span class="br">]</span><span class="br">)</span><span class="op">/</span><span class="pp">Degree</span> <span class="op">//</span> <span class="fn">N</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>For the general second-degree equation $ax^2+2hxy+by^2+2gx+2fy+c=0$, the coefficients here are $a=1,\\ h=-5/2,\\ b=4,\\ g=1/2,\\ f=1,\\ c=-2$. A pair-of-lines condition requires the determinant $\\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$. Substituting: $(1)(4)(-2)+2(1)(1/2)(-5/2)-(1)(1)-(4)(1/4)-(-2)(25/4) = -8-2.5-1-1+12.5 = 0$. Confirmed.</p><p>Since $x^2-5xy+4y^2$ factors as $(x-y)(x-4y)$, the full equation is $(x-y+l)(x-4y+m)=0$. Matching the linear and constant terms gives $l=-1,\\ m=2$.</p><p>Solving the two line equations simultaneously gives the intersection point $(2,1)$. The angle formula $\\tan\\theta=|\\frac{m_1-m_2}{1+m_1 m_2}|$ with slopes $1$ and $1/4$ gives $\\theta=\\arctan(3/5)\\approx30.96°$.</p>" data-bn="<p>সাধারণ দ্বিমাত্রিক সমীকরণ $ax^2+2hxy+by^2+2gx+2fy+c=0$-এর জন্য এখানে $a=1,\\ h=-5/2,\\ b=4,\\ g=1/2,\\ f=1,\\ c=-2$। সরলরেখা যুগলের শর্ত হলো নির্ণায়ক $\\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$। মান বসিয়ে পাই: $-8-2.5-1-1+12.5 = 0$। প্রমাণিত।</p><p>যেহেতু $x^2-5xy+4y^2 = (x-y)(x-4y)$, তাই পূর্ণ সমীকরণটি $(x-y+l)(x-4y+m)=0$ আকারে লেখা যায়। একঘাত ও ধ্রুব পদ মেলালে $l=-1,\\ m=2$ পাওয়া যায়।</p><p>দুটি সরলরেখার সমীকরণ একসাথে সমাধান করলে ছেদবিন্দু $(2,1)$ পাওয়া যায়। কোণের সূত্র $\\tan\\theta=|\\frac{m_1-m_2}{1+m_1 m_2}|$-এ ঢাল $1$ ও $1/4$ বসিয়ে $\\theta=\\arctan(3/5)\\approx30.96°$।</p>"><p>For the general second-degree equation $ax^2+2hxy+by^2+2gx+2fy+c=0$, the coefficients here are $a=1,\ h=-5/2,\ b=4,\ g=1/2,\ f=1,\ c=-2$. A pair-of-lines condition requires the determinant $\Delta = abc+2fgh-af^2-bg^2-ch^2 = 0$. Substituting: $(1)(4)(-2)+2(1)(1/2)(-5/2)-(1)(1)-(4)(1/4)-(-2)(25/4) = -8-2.5-1-1+12.5 = 0$. Confirmed.</p><p>Since $x^2-5xy+4y^2$ factors as $(x-y)(x-4y)$, the full equation is $(x-y+l)(x-4y+m)=0$. Matching the linear and constant terms gives $l=-1,\ m=2$.</p><p>Solving the two line equations simultaneously gives the intersection point $(2,1)$. The angle formula $\tan\theta=|\frac{m_1-m_2}{1+m_1 m_2}|$ with slopes $1$ and $1/4$ gives $\theta=\arctan(3/5)\approx30.96°$.</p></div>
@@ -476,17 +525,35 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Type: <span class='final'>Hyperbola</span>. Center: <span class='final'>(0, 0.5)</span>. Standard form (rotated axes): $$\\frac{Y^2}{5/4} - \\frac{X^2}{2} = 1$$" data-bn="ধরন: <span class='final'>অধিবৃত্ত (Hyperbola)</span>। কেন্দ্র: <span class='final'>(0, 0.5)</span>। আদর্শ রূপ (ঘূর্ণিত অক্ষে): $$\\frac{Y^2}{5/4} - \\frac{X^2}{2} = 1$$">Type: <span class="final">Hyperbola</span>. Center: <span class="final">(0, 0.5)</span>. Standard form (rotated axes): $$\frac{Y^2}{5/4} - \frac{X^2}{2} = 1$$</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="cm">(* Find center, eigenvalues for rotation, and plot *)</span>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Store the conic equation first so the same expression is used throughout. *)</span>
 <span class="vr">eq</span> <span class="op">=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="nm">12</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">6</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">9</span>;
 
+<span class="cm">(* The center of a central conic occurs where both first derivatives are zero. *)</span>
 <span class="vr">center</span> <span class="op">=</span> <span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="fn">D</span><span class="br">[</span><span class="vr">eq</span>, <span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="fn">D</span><span class="br">[</span><span class="vr">eq</span>, <span class="vr">y</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
 
+<span class="cm">(* This matrix holds the quadratic coefficients; its eigenvectors give rotated axes. *)</span>
 <span class="vr">mat</span> <span class="op">=</span> <span class="br">{{</span><span class="nm">1</span>, <span class="nm">6</span><span class="br">}</span>, <span class="br">{</span><span class="nm">6</span>, <span class="nm">-4</span><span class="br">}}</span>;
 <span class="br">{</span><span class="vr">evals</span>, <span class="vr">evecs</span><span class="br">}</span> <span class="op">=</span> <span class="fn">Eigensystem</span><span class="br">[</span><span class="vr">mat</span><span class="br">]</span>
 
+<span class="cm">(* Plot the implicit curve to confirm the conic shape after classification. *)</span>
 <span class="fn">ContourPlot</span><span class="br">[</span><span class="vr">eq</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span>,
   <span class="pp">PlotPoints</span> <span class="op">-></span> <span class="nm">150</span><span class="br">]</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: the number B^2 - 4AC tells you the conic type. *)</span>
+<span class="cm">(* Equation is A x^2 + B xy + C y^2 + ... with A=1, B=12, C=-4. *)</span>
+<span class="nm">12</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">4</span><span class="op">*</span><span class="nm">1</span><span class="op">*</span><span class="br">(</span><span class="nm">-4</span><span class="br">)</span>   <span class="cm">(* 160 > 0, so the conic is a hyperbola *)</span>
+
+<span class="cm">(* Center: solve both partial derivatives = 0 in one step. *)</span>
+<span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="nm">2</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">12</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">6</span> <span class="op">==</span> <span class="nm">0</span>, <span class="nm">12</span> <span class="vr">x</span> <span class="op">-</span> <span class="nm">8</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">4</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* A single ContourPlot confirms the hyperbola shape. *)</span>
+<span class="fn">ContourPlot</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="nm">12</span> <span class="vr">x</span> <span class="vr">y</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">6</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">9</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">-4</span>, <span class="nm">4</span><span class="br">}</span><span class="br">]</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Here $h^2-ab=36-(1)(-4)=40>0$, classifying this as a hyperbola. The center is found by setting both partial derivatives to zero and solving: gives $(0, 0.5)$.</p><p>Shifting the origin to the center eliminates linear terms. The coefficient matrix $\\begin{pmatrix}1&6\\\\6&-4\\end{pmatrix}$ has eigenvalues $5$ and $-8$ — these become the new quadratic coefficients after rotating axes to align with the eigenvectors. The resulting equation $5X^2-8Y^2=-10$ rearranges to the standard form shown.</p>" data-bn="<p>এখানে $h^2-ab=36-(1)(-4)=40>0$, তাই এটি একটি অধিবৃত্ত। আংশিক অন্তরকলন শূন্য রেখে সমাধান করলে কেন্দ্র $(0, 0.5)$ পাওয়া যায়।</p><p>মূলবিন্দু কেন্দ্রে স্থানান্তর করলে একঘাত পদ দূর হয়। সহগ ম্যাট্রিক্স $\\begin{pmatrix}1&6\\\\6&-4\\end{pmatrix}$-এর আইগেনমান $5$ ও $-8$ — অক্ষ ঘূর্ণনের পর এগুলো নতুন দ্বিঘাত সহগ হয়। ফলাফল $5X^2-8Y^2=-10$ থেকে আদর্শ রূপ পাওয়া যায়।</p>"><p>Here $h^2-ab=36-(1)(-4)=40>0$, classifying this as a hyperbola. The center is found by setting both partial derivatives to zero and solving: gives $(0, 0.5)$.</p><p>Shifting the origin to the center eliminates linear terms. The coefficient matrix $\begin{pmatrix}1&6\\6&-4\end{pmatrix}$ has eigenvalues $5$ and $-8$ — these become the new quadratic coefficients after rotating axes to align with the eigenvectors. The resulting equation $5X^2-8Y^2=-10$ rearranges to the standard form shown.</p></div>
@@ -507,14 +574,34 @@ table.calc td { color: var(--text); }
     <div class="ans-box">$$f_x = e^{xy}(2x+x^2y),\quad f_y = x^3 e^{xy}$$ $$f_{xx} = e^{xy}(2+4xy+x^2y^2),\quad f_{yy}=x^4 e^{xy},\quad f_{xy}=e^{xy}(3x^2+x^3y)$$</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span> <span class="vr">y</span><span class="br">]</span>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Define the function once so every derivative is taken from the same formula. *)</span>
+<span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span> <span class="vr">y</span><span class="br">]</span>
 
+<span class="cm">(* First partials: differentiate with respect to one variable at a time. *)</span>
 <span class="vr">fx</span>  <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>        <span class="op">//</span> <span class="fn">Simplify</span>
 <span class="vr">fy</span>  <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">y</span><span class="br">]</span>        <span class="op">//</span> <span class="fn">Simplify</span>
+
+<span class="cm">(* Second partials: repeat differentiation; Simplify keeps answers exam-ready. *)</span>
 <span class="vr">fxx</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">2</span><span class="br">}</span><span class="br">]</span>   <span class="op">//</span> <span class="fn">Simplify</span>
 <span class="vr">fyy</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="br">{</span><span class="vr">y</span>, <span class="nm">2</span><span class="br">}</span><span class="br">]</span>   <span class="op">//</span> <span class="fn">Simplify</span>
+
+<span class="cm">(* Mixed partial: first x then y; for smooth functions this equals fyx. *)</span>
 <span class="vr">fxy</span> <span class="op">=</span> <span class="fn">D</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>, <span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>    <span class="op">//</span> <span class="fn">Simplify</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: keep f as a plain expression and use D once per derivative. *)</span>
+<span class="vr">f</span> <span class="op">=</span> <span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span> <span class="vr">y</span><span class="br">]</span>;
+
+<span class="fn">D</span><span class="br">[</span><span class="vr">f</span>, <span class="vr">x</span><span class="br">]</span>        <span class="cm">(* f_x  *)</span>
+<span class="fn">D</span><span class="br">[</span><span class="vr">f</span>, <span class="vr">y</span><span class="br">]</span>        <span class="cm">(* f_y  *)</span>
+<span class="fn">D</span><span class="br">[</span><span class="vr">f</span>, <span class="vr">x</span>, <span class="vr">x</span><span class="br">]</span>     <span class="cm">(* f_xx *)</span>
+<span class="fn">D</span><span class="br">[</span><span class="vr">f</span>, <span class="vr">y</span>, <span class="vr">y</span><span class="br">]</span>     <span class="cm">(* f_yy *)</span>
+<span class="fn">D</span><span class="br">[</span><span class="vr">f</span>, <span class="vr">x</span>, <span class="vr">y</span><span class="br">]</span>     <span class="cm">(* f_xy *)</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>For $f_x$, use the product rule treating $y$ as constant: $\\frac{\\partial}{\\partial x}(x^2)\\cdot e^{xy} + x^2\\cdot\\frac{\\partial}{\\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$. For $f_y$, $x$ is constant, so only $e^{xy}$ differentiates: $x^2\\cdot xe^{xy}=x^3e^{xy}$.</p><p>Second derivatives repeat the same process on each first derivative. Clairaut's theorem guarantees $f_{xy}=f_{yx}$ since $f$ is smooth everywhere.</p>" data-bn="<p>$f_x$-এর জন্য $y$-কে ধ্রুবক ধরে গুণ-নিয়ম ব্যবহার করি: $\\frac{\\partial}{\\partial x}(x^2)\\cdot e^{xy} + x^2\\cdot\\frac{\\partial}{\\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$। $f_y$-তে $x$ ধ্রুবক, তাই শুধু $e^{xy}$ অন্তরিত হয়: $x^2\\cdot xe^{xy}=x^3e^{xy}$।</p><p>দ্বিতীয় অন্তরজগুলো একইভাবে প্রথম অন্তরজের উপর পুনরায় অন্তরকলন। ক্লেরোর উপপাদ্য অনুসারে $f_{xy}=f_{yx}$, কারণ $f$ সর্বত্র মসৃণ।</p>"><p>For $f_x$, use the product rule treating $y$ as constant: $\frac{\partial}{\partial x}(x^2)\cdot e^{xy} + x^2\cdot\frac{\partial}{\partial x}(e^{xy}) = 2xe^{xy}+x^2ye^{xy}$. For $f_y$, $x$ is constant, so only $e^{xy}$ differentiates: $x^2\cdot xe^{xy}=x^3e^{xy}$.</p><p>Second derivatives repeat the same process on each first derivative. Clairaut's theorem guarantees $f_{xy}=f_{yx}$ since $f$ is smooth everywhere.</p></div>
@@ -535,12 +622,25 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="The limit as $(x,y)\\to(0,0)$ equals $0 = f(0,0)$ — <span class='final'>continuous at the origin</span>." data-bn="$(x,y)\\to(0,0)$ হলে সীমামান $= 0 = f(0,0)$ — <span class='final'>মূলবিন্দুতে অবিচ্ছিন্ন</span>।">The limit as $(x,y)\to(0,0)$ equals $0 = f(0,0)$ — <span class="final">continuous at the origin</span>.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="br">(</span><span class="vr">x</span> <span class="vr">y</span> <span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span>;
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Define the non-origin part of the piecewise function. *)</span>
+<span class="fn">f</span><span class="br">[</span><span class="vr">x_</span>, <span class="vr">y_</span><span class="br">]</span> <span class="op">:=</span> <span class="br">(</span><span class="vr">x</span> <span class="vr">y</span> <span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span>;
 
-<span class="cm">(* Polar substitution to show bound *)</span>
+<span class="cm">(* Substitute x=r cos(t), y=r sin(t) to test every path to the origin at once. *)</span>
 <span class="vr">polar</span> <span class="op">=</span> <span class="fn">f</span><span class="br">[</span><span class="vr">r</span> <span class="fn">Cos</span><span class="br">[</span><span class="vr">t</span><span class="br">]</span>, <span class="vr">r</span> <span class="fn">Sin</span><span class="br">[</span><span class="vr">t</span><span class="br">]</span><span class="br">]</span> <span class="op">//</span> <span class="fn">Simplify</span>
+
+<span class="cm">(* If this limit is 0, it matches f(0,0)=0 and proves continuity. *)</span>
 <span class="fn">Limit</span><span class="br">[</span><span class="vr">polar</span>, <span class="vr">r</span> <span class="op">-></span> <span class="nm">0</span><span class="br">]</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: Limit takes a 2-D limit directly, no polar substitution needed. *)</span>
+<span class="fn">Limit</span><span class="br">[</span><span class="br">(</span><span class="vr">x</span> <span class="vr">y</span> <span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span><span class="br">)</span><span class="op">/</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="vr">y</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span><span class="br">}</span> <span class="op">-></span> <span class="br">{</span><span class="nm">0</span>, <span class="nm">0</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* Result 0 equals f(0,0), so f is continuous at the origin. *)</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Switching to polar coordinates $x=r\\cos\\theta,\\ y=r\\sin\\theta$ transforms the function into $r^2\\cos\\theta\\sin\\theta(\\cos^2\\theta-\\sin^2\\theta)$. The angular factor is bounded between $-1$ and $1$ regardless of $\\theta$.</p><p>So $|f|\\le r^2$, and as $r\\to0$ from any direction, $r^2\\to0$ forces the function to $0$, matching $f(0,0)=0$. This direction-independence is exactly what continuity requires.</p>" data-bn="<p>পোলার স্থানাঙ্কে $x=r\\cos\\theta,\\ y=r\\sin\\theta$ বসালে ফাংশনটি $r^2\\cos\\theta\\sin\\theta(\\cos^2\\theta-\\sin^2\\theta)$ হয়। কৌণিক অংশ $\\theta$-র যেকোনো মানের জন্য $-1$ ও $1$-এর মধ্যে সীমাবদ্ধ।</p><p>অতএব $|f|\\le r^2$, এবং $r\\to0$ হলে যেকোনো দিক থেকেই $r^2\\to0$, ফলে ফাংশনের মান $0$-তে যায় যা $f(0,0)=0$-এর সমান। এই দিক-নিরপেক্ষতাই অবিচ্ছিন্নতার শর্ত।</p>"><p>Switching to polar coordinates $x=r\cos\theta,\ y=r\sin\theta$ transforms the function into $r^2\cos\theta\sin\theta(\cos^2\theta-\sin^2\theta)$. The angular factor is bounded between $-1$ and $1$ regardless of $\theta$.</p><p>So $|f|\le r^2$, and as $r\to0$ from any direction, $r^2\to0$ forces the function to $0$, matching $f(0,0)=0$. This direction-independence is exactly what continuity requires.</p></div>
@@ -561,21 +661,37 @@ table.calc td { color: var(--text); }
     <div class="ans-box"><span class="final">(i)</span> $y=e^{5x}-e^{2x}$ &nbsp;&nbsp; <span class="final">(ii)</span> $y=\frac{1}{4}\sin2x-\frac{x}{2}\cos2x$ &nbsp;&nbsp; <span class="final">(iii)</span> $x^4-2x^2y^2=-1$</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="cm">(* (i) Constant-coefficient homogeneous ODE *)</span>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* (i) DSolve applies the initial conditions while solving the ODE. *)</span>
 <span class="vr">sol1</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">7</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">10</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>,
   <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">3</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="cm">(* Replace y[x] with sol1 before plotting the actual solution curve. *)</span>
 <span class="fn">Plot</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol1</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span>
 
-<span class="cm">(* (ii) Resonant forced oscillator *)</span>
+<span class="cm">(* (ii) This forced ODE is resonant; DSolve handles the special particular solution. *)</span>
 <span class="vr">sol2</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">2</span> <span class="fn">Sin</span><span class="br">[</span><span class="nm">2</span> <span class="vr">x</span><span class="br">]</span>,
   <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="cm">(* Plot on a wider interval to make the oscillation visible. *)</span>
 <span class="fn">Plot</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol2</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">6</span><span class="br">}</span><span class="br">]</span>
 
-<span class="cm">(* (iii) Homogeneous first-order ODE *)</span>
+<span class="cm">(* (iii) Write M dx + N dy = 0 as an equation in y[x] for DSolve. *)</span>
 <span class="vr">sol3</span> <span class="op">=</span> <span class="fn">DSolve</span><span class="br">[</span><span class="br">{</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span> <span class="op">-</span> <span class="vr">x</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>,
   <span class="vr">y</span><span class="br">[</span><span class="nm">1</span><span class="br">]</span> <span class="op">==</span> <span class="nm">1</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="cm">(* Evaluate is used so Plot receives the solved expression, not the replacement rule. *)</span>
 <span class="fn">Plot</span><span class="br">[</span><span class="fn">Evaluate</span><span class="br">[</span><span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">/.</span> <span class="vr">sol3</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0.2</span>, <span class="nm">3</span><span class="br">}</span><span class="br">]</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: DSolveValue returns the solution expression directly (no /. rule). *)</span>
+<span class="vr">y1</span> <span class="op">=</span> <span class="fn">DSolveValue</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">7</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">10</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">3</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="vr">y2</span> <span class="op">=</span> <span class="fn">DSolveValue</span><span class="br">[</span><span class="br">{</span><span class="vr">y</span><span class="st">''</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">+</span> <span class="nm">4</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">2</span> <span class="fn">Sin</span><span class="br">[</span><span class="nm">2</span> <span class="vr">x</span><span class="br">]</span>, <span class="vr">y</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="nm">0</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+<span class="vr">y3</span> <span class="op">=</span> <span class="fn">DSolveValue</span><span class="br">[</span><span class="br">{</span><span class="br">(</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span> <span class="op">-</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span><span class="br">)</span> <span class="op">-</span> <span class="vr">x</span> <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="vr">y</span><span class="st">'</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">==</span> <span class="nm">0</span>, <span class="vr">y</span><span class="br">[</span><span class="nm">1</span><span class="br">]</span> <span class="op">==</span> <span class="nm">1</span><span class="br">}</span>, <span class="vr">y</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="vr">x</span><span class="br">]</span>
+
+<span class="cm">(* Plot the first two closed-form solutions together. *)</span>
+<span class="fn">Plot</span><span class="br">[</span><span class="br">{</span><span class="vr">y1</span>, <span class="vr">y2</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">6</span><span class="br">}</span><span class="br">]</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p><b>(i)</b> Characteristic equation $r^2-7r+10=0$ factors as $(r-2)(r-5)=0$, giving $y=C_1e^{2x}+C_2e^{5x}$. From $y(0)=0$: $C_1+C_2=0$. From $y'(0)=3$: $2C_1+5C_2=3$. Solving: $C_1=-1,\\ C_2=1$.</p><p><b>(ii)</b> The natural frequency $\\omega=2$ matches the forcing $2\\sin2x$ — resonance. The particular solution must take the form $y_p=x(A\\cos2x+B\\sin2x)$. Substituting into the ODE gives $A=-1/2,\\ B=0$. Initial conditions fix the homogeneous part.</p><p><b>(iii)</b> The ODE is homogeneous in $x,y$. Substituting $y=vx$ reduces it to a separable equation. Integrating and applying $y(1)=1$ yields the implicit solution $x^4-2x^2y^2=-1$.</p>" data-bn="<p><b>(i)</b> বৈশিষ্ট্যিক সমীকরণ $r^2-7r+10=0$ থেকে $(r-2)(r-5)=0$, অর্থাৎ $y=C_1e^{2x}+C_2e^{5x}$। $y(0)=0$ থেকে $C_1+C_2=0$। $y'(0)=3$ থেকে $2C_1+5C_2=3$। সমাধান: $C_1=-1,\\ C_2=1$।</p><p><b>(ii)</b> স্বাভাবিক কম্পাঙ্ক $\\omega=2$ বলবিধির $2\\sin2x$-এর সাথে মিলে যায় — অনুনাদ ঘটে। বিশেষ সমাধান $y_p=x(A\\cos2x+B\\sin2x)$ ধরতে হয়। ODE-তে বসিয়ে $A=-1/2,\\ B=0$ পাওয়া যায়। আদি শর্ত থেকে সমসত্ত্ব অংশ নির্ণীত হয়।</p><p><b>(iii)</b> ODE টি $x,y$-তে সমসত্ত্ব। $y=vx$ প্রতিস্থাপন করলে পৃথকযোগ্য সমীকরণ পাওয়া যায়। যোগকলন করে $y(1)=1$ শর্ত প্রয়োগ করলে অন্তর্নিহিত সমাধান $x^4-2x^2y^2=-1$।</p>"><p><b>(i)</b> Characteristic equation $r^2-7r+10=0$ factors as $(r-2)(r-5)=0$, giving $y=C_1e^{2x}+C_2e^{5x}$. From $y(0)=0$: $C_1+C_2=0$. From $y'(0)=3$: $2C_1+5C_2=3$. Solving: $C_1=-1,\ C_2=1$.</p><p><b>(ii)</b> The natural frequency $\omega=2$ matches the forcing $2\sin2x$ — resonance. The particular solution must take the form $y_p=x(A\cos2x+B\sin2x)$. Substituting into the ODE gives $A=-1/2,\ B=0$. Initial conditions fix the homogeneous part.</p><p><b>(iii)</b> The ODE is homogeneous in $x,y$. Substituting $y=vx$ reduces it to a separable equation. Integrating and applying $y(1)=1$ yields the implicit solution $x^4-2x^2y^2=-1$.</p></div>
@@ -596,14 +712,29 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Root ≈ <span class='final'>0.624</span>" data-bn="মূল ≈ <span class='final'>0.624</span>">Root ≈ <span class="final">0.624</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Cos</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">1.3</span> <span class="vr">x</span>;
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Define f(x); the root is where f(x)=0. *)</span>
+<span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Cos</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">1.3</span> <span class="vr">x</span>;
+<span class="cm">(* Choose endpoints with opposite signs, so the root is trapped between them. *)</span>
 <span class="vr">a</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">1</span>;
+<span class="cm">(* Keep halving the interval until its width gives three-decimal accuracy. *)</span>
 <span class="kw">While</span><span class="br">[</span><span class="fn">Abs</span><span class="br">[</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">]</span> <span class="op">></span> <span class="nm">0.0005</span>,
   <span class="vr">c</span> <span class="op">=</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span>;
+  <span class="cm">(* Keep the half where the sign change remains. *)</span>
   <span class="kw">If</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span> <span class="fn">f</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span> <span class="op"><</span> <span class="nm">0</span>, <span class="vr">b</span> <span class="op">=</span> <span class="vr">c</span>, <span class="vr">a</span> <span class="op">=</span> <span class="vr">c</span><span class="br">]</span>
 <span class="br">]</span>;
+<span class="cm">(* The final midpoint is the best root estimate. *)</span>
 <span class="vr">root</span> <span class="op">=</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span> <span class="op">//</span> <span class="fn">N</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: FindRoot uses a fast built-in solver from one starting guess. *)</span>
+<span class="fn">FindRoot</span><span class="br">[</span><span class="fn">Cos</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span> <span class="op">-</span> <span class="nm">1.3</span> <span class="vr">x</span> <span class="op">==</span> <span class="nm">0</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0.5</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* Returns {x -> 0.6242...}, matching the bisection result. *)</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>$f(0)=1>0$ and $f(1)\\approx-0.76<0$, so a root exists in $(0,1)$ by the Intermediate Value Theorem. Each iteration bisects the interval and keeps the half where the sign change persists. After about 11 iterations, the interval shrinks below $0.0005$, giving three-decimal accuracy.</p>" data-bn="<p>$f(0)=1>0$ এবং $f(1)\\approx-0.76<0$, তাই মধ্যবর্তী মান উপপাদ্য অনুসারে $(0,1)$ ব্যবধানে একটি মূল আছে। প্রতিটি পুনরাবৃত্তিতে ব্যবধান অর্ধেক করা হয় এবং চিহ্ন-পরিবর্তনসহ অর্ধাংশ রাখা হয়। প্রায় ১১ পুনরাবৃত্তির পর ব্যবধান $0.0005$-এর নিচে নামে, ফলে তিন দশমিক নির্ভুলতা পাওয়া যায়।</p>"><p>$f(0)=1>0$ and $f(1)\approx-0.76<0$, so a root exists in $(0,1)$ by the Intermediate Value Theorem. Each iteration bisects the interval and keeps the half where the sign change persists. After about 11 iterations, the interval shrinks below $0.0005$, giving three-decimal accuracy.</p></div>
@@ -624,20 +755,36 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Composite Simpson's $\\frac{1}{3}$ rule with $n=10$: <span class='final'>1.4627</span>.<br>Single-panel Simpson's $\\frac{1}{3}$ rule: <span class='final'>1.4757</span>." data-bn="$n=10$ সহ composite Simpson's $\\frac{1}{3}$ নিয়মে: <span class='final'>1.4627</span>।<br>Single-panel Simpson's $\\frac{1}{3}$ নিয়মে: <span class='final'>1.4757</span>।">Composite Simpson's $\frac{1}{3}$ rule with $n=10$: <span class="final">1.4627</span>.<br>Single-panel Simpson's $\frac{1}{3}$ rule: <span class="final">1.4757</span>.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span><span class="br">]</span>;
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Define the integrand f(x)=e^(x^2). *)</span>
+<span class="fn">f</span><span class="br">[</span><span class="vr">x_</span><span class="br">]</span> <span class="op">:=</span> <span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span><span class="br">]</span>;
+<span class="cm">(* Composite Simpson's 1/3 needs an even number of subintervals; use n=10. *)</span>
 <span class="vr">n</span> <span class="op">=</span> <span class="nm">10</span>; <span class="vr">a</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">b</span> <span class="op">=</span> <span class="nm">1</span>; <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span><span class="op">/</span><span class="vr">n</span>;
+<span class="cm">(* Build all x-points and then evaluate y=f(x) at those points. *)</span>
 <span class="vr">xs</span> <span class="op">=</span> <span class="fn">Table</span><span class="br">[</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">i</span><span class="op">*</span><span class="vr">h</span>, <span class="br">{</span><span class="vr">i</span>, <span class="nm">0</span>, <span class="vr">n</span><span class="br">}</span><span class="br">]</span>;
 <span class="vr">ys</span> <span class="op">=</span> <span class="fn">f</span> <span class="op">/@</span> <span class="vr">xs</span>;
 
+<span class="cm">(* Apply Simpson weights: 1 at ends, 4 on odd interior points, 2 on even interior points. *)</span>
 <span class="vr">integral</span> <span class="op">=</span> <span class="br">(</span><span class="vr">h</span><span class="op">/</span><span class="nm">3</span><span class="br">)</span><span class="op">*</span><span class="br">(</span><span class="vr">ys</span><span class="br">[[</span><span class="nm">1</span><span class="br">]]</span> <span class="op">+</span> <span class="vr">ys</span><span class="br">[[</span><span class="nm">-1</span><span class="br">]]</span> <span class="op">+</span>
      <span class="nm">4</span><span class="op">*</span><span class="fn">Total</span><span class="br">[</span><span class="vr">ys</span><span class="br">[[</span><span class="fn">Range</span><span class="br">[</span><span class="nm">2</span>, <span class="vr">n</span>, <span class="nm">2</span><span class="br">]</span><span class="br">]]</span><span class="br">]</span> <span class="op">+</span>
      <span class="nm">2</span><span class="op">*</span><span class="fn">Total</span><span class="br">[</span><span class="vr">ys</span><span class="br">[[</span><span class="fn">Range</span><span class="br">[</span><span class="nm">3</span>, <span class="vr">n</span> <span class="op">-</span> <span class="nm">1</span>, <span class="nm">2</span><span class="br">]</span><span class="br">]]</span><span class="br">]</span><span class="br">)</span>;
 
 <span class="fn">Print</span><span class="br">[</span><span class="st">"Simpson's 1/3 = "</span>, <span class="vr">integral</span><span class="br">]</span>
+<span class="cm">(* Alternative: one Simpson panel using only a, midpoint, and b. *)</span>
 <span class="vr">singlePanel</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span><span class="op">/</span><span class="nm">6</span> <span class="op">*</span> <span class="br">(</span><span class="fn">f</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span> <span class="op">+</span> <span class="nm">4</span><span class="fn">f</span><span class="br">[</span><span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span><span class="br">)</span><span class="op">/</span><span class="nm">2</span><span class="br">]</span> <span class="op">+</span> <span class="fn">f</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="br">)</span>;
 <span class="fn">Print</span><span class="br">[</span><span class="st">"Single-panel = "</span>, <span class="vr">singlePanel</span><span class="br">]</span>
+<span class="cm">(* NIntegrate gives a high-accuracy reference value for comparison. *)</span>
 <span class="fn">Print</span><span class="br">[</span><span class="st">"NIntegrate   = "</span>, <span class="fn">NIntegrate</span><span class="br">[</span><span class="fn">f</span><span class="br">[</span><span class="vr">x</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span><span class="br">]</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: NIntegrate computes the whole definite integral in one line. *)</span>
+<span class="fn">NIntegrate</span><span class="br">[</span><span class="fn">Exp</span><span class="br">[</span><span class="vr">x</span><span class="op">^</span><span class="nm">2</span><span class="br">]</span>, <span class="br">{</span><span class="vr">x</span>, <span class="nm">0</span>, <span class="nm">1</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* It returns about 1.4627 — the same value the Simpson code works out. *)</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the composite formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. If only one Simpson panel is expected, use $\\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$, which gives about $1.4757$ for this integral.</p>" data-bn="<p>সিম্পসনের ১/৩ নিয়ম পরপর তিনটি বিন্দুর মধ্য দিয়ে পরাবৃত্ত ফিট করে। $n=10$ (জোড় সংখ্যা আবশ্যক) নিয়ে composite সূত্রে প্রান্তবিন্দুকে ১, বিজোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ৪, এবং জোড়-সূচকের অভ্যন্তরীণ বিন্দুকে ২ দিয়ে গুণ করে, সবটা $h/3$ দিয়ে স্কেল করা হয়। যদি শুধু একটি Simpson panel চাওয়া হয়, তবে $\\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$ ব্যবহার করতে হবে, যা এই সমাকলের জন্য প্রায় $1.4757$ দেয়।</p>"><p>Simpson's 1/3 rule fits parabolas through consecutive triples of points. With $n=10$ (even required), the composite formula weights endpoints by 1, odd-indexed interior points by 4, and even-indexed interior points by 2, all scaled by $h/3$. If only one Simpson panel is expected, use $\frac{b-a}{6}[f(a)+4f((a+b)/2)+f(b)]$, which gives about $1.4757$ for this integral.</p></div>
@@ -652,22 +799,40 @@ table.calc td { color: var(--text); }
   </div>
   <div class="qbody">
     <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
-    <div class="qtext" data-en="Using Cramer's rule, solve: $2x+y+z=7,\\quad x-4y+3z=2,\\quad 3x+2y+2z=13$" data-bn="ক্রেমারের নিয়ম ব্যবহার করে সমাধান কর: $2x+y+z=7,\\quad x-4y+3z=2,\\quad 3x+2y+2z=13$">Using Cramer's rule, solve: $2x+y+z=7,\quad x-4y+3z=2,\quad 3x+2y+2z=13$</div>
+    <div class="qtext" data-en="Using Cramer's rule, solve: $$\\begin{aligned}2x+y+z&=7\\\\x-4y+3z&=2\\\\3x+2y+2z&=13\\end{aligned}$$" data-bn="ক্রেমারের নিয়ম ব্যবহার করে সমাধান কর: $$\\begin{aligned}2x+y+z&=7\\\\x-4y+3z&=2\\\\3x+2y+2z&=13\\end{aligned}$$">Using Cramer's rule, solve: $$\begin{aligned}2x+y+z&=7\\x-4y+3z&=2\\3x+2y+2z&=13\end{aligned}$$</div>
 
     <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
     <div class="ans-box"><span class="final">x = 1, &nbsp; y = 2, &nbsp; z = 3</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="vr">A</span> <span class="op">=</span> <span class="br">{{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">1</span><span class="br">}</span>, <span class="br">{</span><span class="nm">1</span>, <span class="nm">-4</span>, <span class="nm">3</span><span class="br">}</span>, <span class="br">{</span><span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">2</span><span class="br">}}</span>;
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Coefficient matrix A contains the x, y, z coefficients from the system. *)</span>
+<span class="vr">A</span> <span class="op">=</span> <span class="br">{{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">1</span><span class="br">}</span>, <span class="br">{</span><span class="nm">1</span>, <span class="nm">-4</span>, <span class="nm">3</span><span class="br">}</span>, <span class="br">{</span><span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">2</span><span class="br">}}</span>;
+<span class="cm">(* Right-hand side vector contains the constants 7, 2, and 13. *)</span>
 <span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">7</span>, <span class="nm">2</span>, <span class="nm">13</span><span class="br">}</span>;
 
+<span class="cm">(* D0 is the determinant of A; it must be nonzero for Cramer's rule. *)</span>
 <span class="vr">D0</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">A</span><span class="br">]</span>;
+<span class="cm">(* Replace column 1 with b to compute Dx. *)</span>
 <span class="vr">Ax</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Ax</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">1</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dx</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Ax</span><span class="br">]</span>;
+<span class="cm">(* Replace column 2 with b to compute Dy. *)</span>
 <span class="vr">Ay</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Ay</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">2</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dy</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Ay</span><span class="br">]</span>;
+<span class="cm">(* Replace column 3 with b to compute Dz. *)</span>
 <span class="vr">Az</span> <span class="op">=</span> <span class="vr">A</span>; <span class="vr">Az</span><span class="br">[[</span><span class="pp">All</span>, <span class="nm">3</span><span class="br">]]</span> <span class="op">=</span> <span class="vr">b</span>; <span class="vr">Dz</span> <span class="op">=</span> <span class="fn">Det</span><span class="br">[</span><span class="vr">Az</span><span class="br">]</span>;
 
+<span class="cm">(* Divide each replaced determinant by D0 to get {x,y,z}. *)</span>
 <span class="br">{</span><span class="vr">Dx</span>, <span class="vr">Dy</span>, <span class="vr">Dz</span><span class="br">}</span><span class="op">/</span><span class="vr">D0</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: LinearSolve solves A x = b directly for {x, y, z}. *)</span>
+<span class="fn">LinearSolve</span><span class="br">[</span><span class="br">{{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">1</span><span class="br">}</span>, <span class="br">{</span><span class="nm">1</span>, <span class="nm">-4</span>, <span class="nm">3</span><span class="br">}</span>, <span class="br">{</span><span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">2</span><span class="br">}}</span>, <span class="br">{</span><span class="nm">7</span>, <span class="nm">2</span>, <span class="nm">13</span><span class="br">}</span><span class="br">]</span>
+
+<span class="cm">(* Or let Solve handle the three equations symbolically. *)</span>
+<span class="fn">Solve</span><span class="br">[</span><span class="br">{</span><span class="nm">2</span> <span class="vr">x</span> <span class="op">+</span> <span class="vr">y</span> <span class="op">+</span> <span class="vr">z</span> <span class="op">==</span> <span class="nm">7</span>, <span class="vr">x</span> <span class="op">-</span> <span class="nm">4</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">3</span> <span class="vr">z</span> <span class="op">==</span> <span class="nm">2</span>, <span class="nm">3</span> <span class="vr">x</span> <span class="op">+</span> <span class="nm">2</span> <span class="vr">y</span> <span class="op">+</span> <span class="nm">2</span> <span class="vr">z</span> <span class="op">==</span> <span class="nm">13</span><span class="br">}</span>, <span class="br">{</span><span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">z</span><span class="br">}</span><span class="br">]</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Cramer's rule solves $Ax=b$ by replacing one column of $A$ at a time with $b$ and comparing determinants. Here $\\det(A)=-7$, and replacing the 1st, 2nd, 3rd columns gives $D_x=-7,\\ D_y=-14,\\ D_z=-21$. Dividing each by $D_0=-7$ yields $x=1, y=2, z=3$.</p>" data-bn="<p>ক্রেমারের নিয়মে $Ax=b$ সমাধানের জন্য $A$-এর একটি করে কলাম $b$ দিয়ে প্রতিস্থাপন করে নির্ণায়কের অনুপাত নেওয়া হয়। এখানে $\\det(A)=-7$, এবং ১ম, ২য়, ৩য় কলাম প্রতিস্থাপনে $D_x=-7,\\ D_y=-14,\\ D_z=-21$। প্রতিটিকে $D_0=-7$ দিয়ে ভাগ করলে $x=1, y=2, z=3$ পাওয়া যায়।</p>"><p>Cramer's rule solves $Ax=b$ by replacing one column of $A$ at a time with $b$ and comparing determinants. Here $\det(A)=-7$, and replacing the 1st, 2nd, 3rd columns gives $D_x=-7,\ D_y=-14,\ D_z=-21$. Dividing each by $D_0=-7$ yields $x=1, y=2, z=3$.</p></div>
@@ -688,13 +853,29 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="$\\vec a\\cdot\\vec c=0$ (perpendicular) and $|\\vec a|^2+|\\vec c|^2=14+21=35=|\\vec b|^2$ — <span class='final'>right triangle confirmed</span>." data-bn="$\\vec a\\cdot\\vec c=0$ (লম্ব) এবং $|\\vec a|^2+|\\vec c|^2=14+21=35=|\\vec b|^2$ — <span class='final'>সমকোণী ত্রিভুজ প্রমাণিত</span>।">$\vec a\cdot\vec c=0$ (perpendicular) and $|\vec a|^2+|\vec c|^2=14+21=35=|\vec b|^2$ — <span class="final">right triangle confirmed</span>.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
-<pre class="code"><span class="vr">a</span> <span class="op">=</span> <span class="br">{</span><span class="nm">3</span>, <span class="nm">-2</span>, <span class="nm">1</span><span class="br">}</span>; <span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">1</span>, <span class="nm">-3</span>, <span class="nm">5</span><span class="br">}</span>; <span class="vr">c</span> <span class="op">=</span> <span class="br">{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">-4</span><span class="br">}</span>;
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Enter the three vectors as coordinate lists. *)</span>
+<span class="vr">a</span> <span class="op">=</span> <span class="br">{</span><span class="nm">3</span>, <span class="nm">-2</span>, <span class="nm">1</span><span class="br">}</span>; <span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">1</span>, <span class="nm">-3</span>, <span class="nm">5</span><span class="br">}</span>; <span class="vr">c</span> <span class="op">=</span> <span class="br">{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">-4</span><span class="br">}</span>;
 
+<span class="cm">(* This confirms the three vectors can close to form a triangle. *)</span>
 <span class="vr">a</span> <span class="op">-</span> <span class="vr">b</span> <span class="op">==</span> <span class="vr">c</span>               <span class="cm">(* True — they close into a triangle *)</span>
+<span class="cm">(* Dot product zero means the two sides meet at a right angle. *)</span>
 <span class="vr">a</span><span class="op">.</span><span class="vr">c</span>                       <span class="cm">(* 0 — perpendicular *)</span>
+<span class="cm">(* Compare squared lengths so no square roots are needed. *)</span>
 <span class="br">{</span><span class="fn">Norm</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>, <span class="fn">Norm</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>, <span class="fn">Norm</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span><span class="br">}</span> <span class="cm">(* {14, 21, 35} *)</span>
+<span class="cm">(* Pythagoras confirms b is the hypotenuse. *)</span>
 <span class="fn">Norm</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">==</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>  <span class="cm">(* True *)</span></pre></div>
+
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag mathematica">Mathematica</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="cm">(* Easier: verify all three conditions in one combined boolean test. *)</span>
+<span class="vr">a</span> <span class="op">=</span> <span class="br">{</span><span class="nm">3</span>, <span class="nm">-2</span>, <span class="nm">1</span><span class="br">}</span>; <span class="vr">b</span> <span class="op">=</span> <span class="br">{</span><span class="nm">1</span>, <span class="nm">-3</span>, <span class="nm">5</span><span class="br">}</span>; <span class="vr">c</span> <span class="op">=</span> <span class="br">{</span><span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">-4</span><span class="br">}</span>;
+
+<span class="cm">(* Sides close (a-b=c), a and c are perpendicular, and Pythagoras holds. *)</span>
+<span class="vr">a</span> <span class="op">-</span> <span class="vr">b</span> <span class="op">==</span> <span class="vr">c</span> <span class="op">&amp;&amp;</span> <span class="vr">a</span><span class="op">.</span><span class="vr">c</span> <span class="op">==</span> <span class="nm">0</span> <span class="op">&amp;&amp;</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">a</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">+</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">c</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span> <span class="op">==</span> <span class="fn">Norm</span><span class="br">[</span><span class="vr">b</span><span class="br">]</span><span class="op">^</span><span class="nm">2</span>   <span class="cm">(* True *)</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>First, $\\vec a-\\vec b = \\vec c$ confirms the three vectors close into a triangle when placed head-to-tail. The dot product $\\vec a\\cdot\\vec c = 6-2-4 = 0$ proves sides $\\vec a$ and $\\vec c$ are perpendicular. Finally, $|\\vec a|^2+|\\vec c|^2 = 14+21 = 35 = |\\vec b|^2$ satisfies the Pythagorean theorem, independently confirming the right angle with $\\vec b$ as hypotenuse.</p>" data-bn="<p>প্রথমে, $\\vec a-\\vec b = \\vec c$ প্রমাণ করে ভেক্টর তিনটি মাথায়-লেজে রাখলে একটি ত্রিভুজ তৈরি করে। ডট গুণফল $\\vec a\\cdot\\vec c = 6-2-4 = 0$ দেখায় $\\vec a$ ও $\\vec c$ বাহু পরস্পর লম্ব। সবশেষে, $|\\vec a|^2+|\\vec c|^2 = 14+21 = 35 = |\\vec b|^2$ পীথাগোরাসের উপপাদ্য মেনে চলে, যেখানে $\\vec b$ অতিভুজ।</p>"><p>First, $\vec a-\vec b = \vec c$ confirms the three vectors close into a triangle when placed head-to-tail. The dot product $\vec a\cdot\vec c = 6-2-4 = 0$ proves sides $\vec a$ and $\vec c$ are perpendicular. Finally, $|\vec a|^2+|\vec c|^2 = 14+21 = 35 = |\vec b|^2$ satisfies the Pythagorean theorem, independently confirming the right angle with $\vec b$ as hypotenuse.</p></div>
@@ -725,23 +906,53 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Root ≈ <span class='final'>1.325</span>" data-bn="মূল ≈ <span class='final'>1.325</span>">Root ≈ <span class="final">1.325</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">newton_raphson</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! x0 is the current guess, x1 is the improved guess.</span>
+    <span class="cm">! f stores f(x0), and fd stores f'(x0).</span>
     <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x0</span>, <span class="vr">x1</span>, <span class="vr">f</span>, <span class="vr">fd</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
+    <span class="cm">! Start near the expected root so Newton-Raphson converges quickly.</span>
     <span class="vr">x0</span> <span class="op">=</span> <span class="nm">1.5</span>
+    <span class="cm">! Limit the loop to 50 tries so the program cannot run forever.</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">50</span>
+        <span class="cm">! Evaluate f(x)=x^3-x-1 at the current guess.</span>
         <span class="vr">f</span>  <span class="op">=</span> <span class="vr">x0</span><span class="op">**</span><span class="nm">3</span> <span class="op">-</span> <span class="vr">x0</span> <span class="op">-</span> <span class="nm">1.0</span>
+        <span class="cm">! Evaluate f'(x)=3x^2-1 for the Newton correction.</span>
         <span class="vr">fd</span> <span class="op">=</span> <span class="nm">3.0</span><span class="op">*</span><span class="vr">x0</span><span class="op">**</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">1.0</span>
+        <span class="cm">! Newton formula: new guess = old guess - f/f'.</span>
         <span class="vr">x1</span> <span class="op">=</span> <span class="vr">x0</span> <span class="op">-</span> <span class="vr">f</span><span class="op">/</span><span class="vr">fd</span>
+        <span class="cm">! Stop when two guesses differ by less than half of 0.001.</span>
         <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">x1</span> <span class="op">-</span> <span class="vr">x0</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">exit</span>
+        <span class="cm">! Use the improved value as the next current guess.</span>
         <span class="vr">x0</span> <span class="op">=</span> <span class="vr">x1</span>
     <span class="kw">end do</span>
 
+    <span class="cm">! Print the final approximation to the root.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x1</span>
 <span class="kw">end program</span> <span class="fn">newton_raphson</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">newton_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="cm">! Start near the root, then just repeat the Newton formula a few times.</span>
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">1.5</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">10</span>
+        <span class="cm">! new x = old x - f(x)/f'(x),  with  f = x^3 - x - 1</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="vr">x</span> <span class="op">-</span> <span class="br">(</span><span class="vr">x</span><span class="op">**</span><span class="nm">3</span> <span class="op">-</span> <span class="vr">x</span> <span class="op">-</span> <span class="nm">1.0</span><span class="br">)</span> <span class="op">/</span> <span class="br">(</span><span class="nm">3.0</span><span class="op">*</span><span class="vr">x</span><span class="op">**</span><span class="nm">2</span> <span class="op">-</span> <span class="nm">1.0</span><span class="br">)</span>
+    <span class="kw">end do</span>
+
+    <span class="cm">! After 10 rounds x is accurate to well past 3 decimals.</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x</span>
+<span class="kw">end program</span> <span class="fn">newton_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Starting from $x_0=1.5$, each step applies $x_{n+1}=x_n - f(x_n)/f'(x_n)$, where $f(x)=x^3-x-1$ and $f'(x)=3x^2-1$. Newton–Raphson converges quadratically near a simple root, so only a few iterations are needed to reach three-decimal accuracy.</p>" data-bn="<p>$x_0=1.5$ থেকে শুরু করে প্রতিটি ধাপে $x_{n+1}=x_n - f(x_n)/f'(x_n)$ প্রয়োগ করা হয়, যেখানে $f(x)=x^3-x-1$ এবং $f'(x)=3x^2-1$। নিউটন-রাফসন পদ্ধতি সরল মূলের কাছে দ্বিঘাত হারে অভিসারী হয়, তাই মাত্র কয়েকটি পুনরাবৃত্তিতেই তিন দশমিক নির্ভুলতা পাওয়া যায়।</p>"><p>Starting from $x_0=1.5$, each step applies $x_{n+1}=x_n - f(x_n)/f'(x_n)$, where $f(x)=x^3-x-1$ and $f'(x)=3x^2-1$. Newton–Raphson converges quadratically near a simple root, so only a few iterations are needed to reach three-decimal accuracy.</p></div>
@@ -762,21 +973,47 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Root ≈ <span class='final'>0.739</span> (the Dottie number)" data-bn="মূল ≈ <span class='final'>0.739</span> (ডটি সংখ্যা)">Root ≈ <span class="final">0.739</span> (the Dottie number)</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">fixed_point</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! x0 is the old estimate, x1 is the next estimate.</span>
     <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x0</span>, <span class="vr">x1</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
+    <span class="cm">! Start with a reasonable initial guess near the fixed point.</span>
     <span class="vr">x0</span> <span class="op">=</span> <span class="nm">0.5</span>
+    <span class="cm">! Repeat x = cos(x) until values stop changing significantly.</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">100</span>
+        <span class="cm">! Rearranged equation x-cos(x)=0 becomes x=cos(x).</span>
         <span class="vr">x1</span> <span class="op">=</span> <span class="fn">cos</span><span class="br">(</span><span class="vr">x0</span><span class="br">)</span>
+        <span class="cm">! This tolerance is enough for three-decimal-place accuracy.</span>
         <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">x1</span> <span class="op">-</span> <span class="vr">x0</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">exit</span>
+        <span class="cm">! Move forward to the next iteration.</span>
         <span class="vr">x0</span> <span class="op">=</span> <span class="vr">x1</span>
     <span class="kw">end do</span>
 
+    <span class="cm">! Print the converged fixed point.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x1</span>
 <span class="kw">end program</span> <span class="fn">fixed_point</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">fp_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="cm">! x - cos(x) = 0 rearranges to x = cos(x), already an iteration rule.</span>
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.5</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">40</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="fn">cos</span><span class="br">(</span><span class="vr">x</span><span class="br">)</span>      <span class="cm">! feed the answer back in each time</span>
+    <span class="kw">end do</span>
+
+    <span class="cm">! The value settles at the Dottie number, about 0.739.</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Root = "</span>, <span class="vr">x</span>
+<span class="kw">end program</span> <span class="fn">fp_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Rearranging $x-\\cos x=0$ as $x=\\cos x$ turns root-finding into repeatedly applying $x_{n+1}=\\cos(x_n)$. Since $|g'(x)|=|\\sin x|<1$ near the root, the fixed-point condition holds and convergence is guaranteed.</p>" data-bn="<p>$x-\\cos x=0$ কে $x=\\cos x$ আকারে লিখলে মূল-নির্ণয় $x_{n+1}=\\cos(x_n)$ বারবার প্রয়োগে পরিণত হয়। যেহেতু মূলের কাছে $|g'(x)|=|\\sin x|<1$, স্থিরবিন্দুর শর্ত পূরণ হয় এবং অভিসারিতা নিশ্চিত।</p>"><p>Rearranging $x-\cos x=0$ as $x=\cos x$ turns root-finding into repeatedly applying $x_{n+1}=\cos(x_n)$. Since $|g'(x)|=|\sin x|<1$ near the root, the fixed-point condition holds and convergence is guaranteed.</p></div>
@@ -797,26 +1034,60 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Let $h=\\frac{b-a}{6}$ and $x_i=a+ih$. Weddle's rule gives $$\\int_a^b \\frac{dx}{1+x^2}\\approx \\frac{3h}{10}\\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\\right],\\quad y_i=\\frac{1}{1+x_i^2}.$$" data-bn="$h=\\frac{b-a}{6}$ এবং $x_i=a+ih$ ধরা হলে Weddle's rule অনুযায়ী $$\\int_a^b \\frac{dx}{1+x^2}\\approx \\frac{3h}{10}\\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\\right],\\quad y_i=\\frac{1}{1+x_i^2}.$$">Let $h=\frac{b-a}{6}$ and $x_i=a+ih$. Weddle's rule gives $$\int_a^b \frac{dx}{1+x^2}\approx \frac{3h}{10}\left[y_0+5y_1+y_2+6y_3+y_4+5y_5+y_6\right],\quad y_i=\frac{1}{1+x_i^2}.$$</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">weddle_rule</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! x(0:6) stores the 7 equally spaced points; y stores f(x) values.</span>
     <span class="kw">real</span> <span class="op">::</span> <span class="vr">a</span>, <span class="vr">b</span>, <span class="vr">h</span>, <span class="vr">x</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">y</span><span class="br">(</span><span class="nm">0</span><span class="op">:</span><span class="nm">6</span><span class="br">)</span>, <span class="vr">s</span>, <span class="vr">integral</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
+    <span class="cm">! Read the limits because the question gives them as a and b.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter lower limit a and upper limit b:"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="vr">a</span>, <span class="vr">b</span>
+    <span class="cm">! Weddle's rule uses exactly 6 subintervals, so h=(b-a)/6.</span>
     <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span> <span class="op">/</span> <span class="nm">6.0</span>
 
+    <span class="cm">! Generate each x_i and compute y_i = 1/(1+x_i^2).</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>, <span class="nm">6</span>
         <span class="vr">x</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">=</span> <span class="vr">a</span> <span class="op">+</span> <span class="vr">i</span><span class="op">*</span><span class="vr">h</span>
         <span class="vr">y</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="vr">x</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
     <span class="kw">end do</span>
 
+    <span class="cm">! Apply Weddle's weights: 1, 5, 1, 6, 1, 5, 1.</span>
     <span class="vr">s</span> <span class="op">=</span> <span class="vr">y</span><span class="br">(</span><span class="nm">0</span><span class="br">)</span> <span class="op">+</span> <span class="nm">5.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">1</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">2</span><span class="br">)</span> <span class="op">+</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">3</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">4</span><span class="br">)</span> <span class="op">+</span> <span class="nm">5.0</span><span class="op">*</span><span class="vr">y</span><span class="br">(</span><span class="nm">5</span><span class="br">)</span> <span class="op">+</span> <span class="vr">y</span><span class="br">(</span><span class="nm">6</span><span class="br">)</span>
+    <span class="cm">! Multiply the weighted sum by 3h/10 to get the approximation.</span>
     <span class="vr">integral</span> <span class="op">=</span> <span class="br">(</span><span class="nm">3.0</span><span class="op">*</span><span class="vr">h</span><span class="op">/</span><span class="nm">10.0</span><span class="br">)</span> <span class="op">*</span> <span class="vr">s</span>
 
+    <span class="cm">! Display the numerical integral.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Integral = "</span>, <span class="vr">integral</span>
 <span class="kw">end program</span> <span class="fn">weddle_rule</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">weddle_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="cm">! h is the step; y0..y6 are f(x) at the seven points.</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">a</span>, <span class="vr">b</span>, <span class="vr">h</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">y0</span>, <span class="vr">y1</span>, <span class="vr">y2</span>, <span class="vr">y3</span>, <span class="vr">y4</span>, <span class="vr">y5</span>, <span class="vr">y6</span>
+
+    <span class="cm">! Read the limits a and b given in the question.</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">a</span>, <span class="vr">b</span>
+    <span class="vr">h</span> <span class="op">=</span> <span class="br">(</span><span class="vr">b</span> <span class="op">-</span> <span class="vr">a</span><span class="br">)</span> <span class="op">/</span> <span class="nm">6.0</span>
+
+    <span class="cm">! Work out f(x) = 1/(1+x^2) at each of the 7 equally spaced points.</span>
+    <span class="vr">y0</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="vr">a</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y1</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y2</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="nm">2</span><span class="op">*</span><span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y3</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="nm">3</span><span class="op">*</span><span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y4</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="nm">4</span><span class="op">*</span><span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y5</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="nm">5</span><span class="op">*</span><span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+    <span class="vr">y6</span> <span class="op">=</span> <span class="nm">1.0</span> <span class="op">/</span> <span class="br">(</span><span class="nm">1.0</span> <span class="op">+</span> <span class="br">(</span><span class="vr">a</span> <span class="op">+</span> <span class="nm">6</span><span class="op">*</span><span class="vr">h</span><span class="br">)</span><span class="op">**</span><span class="nm">2</span><span class="br">)</span>
+
+    <span class="cm">! Weddle's rule, written straight from the formula (weights 1,5,1,6,1,5,1).</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Integral = "</span>, <span class="br">(</span><span class="nm">3.0</span><span class="op">*</span><span class="vr">h</span><span class="op">/</span><span class="nm">10.0</span><span class="br">)</span> <span class="op">*</span> <span class="br">(</span><span class="vr">y0</span> <span class="op">+</span> <span class="nm">5</span><span class="op">*</span><span class="vr">y1</span> <span class="op">+</span> <span class="vr">y2</span> <span class="op">+</span> <span class="nm">6</span><span class="op">*</span><span class="vr">y3</span> <span class="op">+</span> <span class="vr">y4</span> <span class="op">+</span> <span class="nm">5</span><span class="op">*</span><span class="vr">y5</span> <span class="op">+</span> <span class="vr">y6</span><span class="br">)</span>
+<span class="kw">end program</span> <span class="fn">weddle_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Weddle's rule requires exactly 6 subintervals (7 points). Since the paper gives the limits as $a$ and $b$, the correct answer should stay in formula form or let the program read $a$ and $b$ as input.</p>" data-bn="<p>ওয়েডলের নিয়মে ঠিক ৬টি উপব্যবধান (৭ বিন্দু) প্রয়োজন। প্রশ্নপত্রে সীমা $a$ ও $b$ দেওয়া আছে, তাই সঠিক উত্তর সূত্র আকারে থাকবে অথবা প্রোগ্রামে $a$ ও $b$ ইনপুট হিসেবে নিতে হবে।</p>"><p>Weddle's rule requires exactly 6 subintervals (7 points). Since the paper gives the limits as $a$ and $b$, the correct answer should stay in formula form or let the program read $a$ and $b$ as input.</p></div>
@@ -837,34 +1108,64 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="General program — works for any $n \\times n$ matrices." data-bn="সাধারণ প্রোগ্রাম — যেকোনো $n \\times n$ ম্যাট্রিক্সের জন্য কাজ করবে।">General program — works for any $n \times n$ matrices.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">matrix_add_sub</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! n controls the matrix size; changing n changes the whole program size.</span>
     <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">n</span> <span class="op">=</span> <span class="nm">3</span>
+    <span class="cm">! A and B are input matrices; C_add and C_sub store the results.</span>
     <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">C_add</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">C_sub</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">j</span>
 
+    <span class="cm">! Read matrix A row by row using nested implied loops.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter elements of A (row by row):"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
+    <span class="cm">! Read matrix B in the same order so matching entries line up.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter elements of B (row by row):"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
 
+    <span class="cm">! Matrix addition/subtraction are element-wise, so visit every (i,j).</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
         <span class="kw">do</span> <span class="vr">j</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+            <span class="cm">! Same position entries are added for C_add.</span>
             <span class="vr">C_add</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">+</span> <span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>
+            <span class="cm">! Same position entries are subtracted for C_sub.</span>
             <span class="vr">C_sub</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">-</span> <span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>
         <span class="kw">end do</span>
     <span class="kw">end do</span>
 
+    <span class="cm">! Print each row of the addition result.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A + B ="</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
         <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C_add</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
     <span class="kw">end do</span>
+    <span class="cm">! Print each row of the subtraction result.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A - B ="</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
         <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C_sub</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
     <span class="kw">end do</span>
 <span class="kw">end program</span> <span class="fn">matrix_add_sub</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">addsub_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">n</span> <span class="op">=</span> <span class="nm">3</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">n</span><span class="br">)</span>
+
+    <span class="cm">! Read both matrices (this fills them automatically).</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter matrix A then matrix B:"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">A</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">B</span>
+
+    <span class="cm">! No loops needed: Fortran adds/subtracts whole arrays at once.</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A + B ="</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="vr">A</span> <span class="op">+</span> <span class="vr">B</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"A - B ="</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="vr">A</span> <span class="op">-</span> <span class="vr">B</span>
+<span class="kw">end program</span> <span class="fn">addsub_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Matrix addition and subtraction are element-wise: a nested loop computes $C_{add}(i,j)=A(i,j)+B(i,j)$ and $C_{sub}(i,j)=A(i,j)-B(i,j)$. The size $n=3$ is a parameter easily changed.</p>" data-bn="<p>ম্যাট্রিক্স যোগ ও বিয়োগ উপাদান-ভিত্তিক: নেস্টেড লুপে $C_{add}(i,j)=A(i,j)+B(i,j)$ এবং $C_{sub}(i,j)=A(i,j)-B(i,j)$ গণনা করা হয়। $n=3$ একটি প্যারামিটার যা সহজেই পরিবর্তনযোগ্য।</p>"><p>Matrix addition and subtraction are element-wise: a nested loop computes $C_{add}(i,j)=A(i,j)+B(i,j)$ and $C_{sub}(i,j)=A(i,j)-B(i,j)$. The size $n=3$ is a parameter easily changed.</p></div>
@@ -879,35 +1180,69 @@ table.calc td { color: var(--text); }
   </div>
   <div class="qbody">
     <div class="lbl lbl-q" data-en="QUESTION" data-bn="প্রশ্ন">QUESTION</div>
-    <div class="qtext" data-en="Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$" data-bn="Gauss-Jacobi পদ্ধতি ব্যবহার করে তিন দশমিক স্থান পর্যন্ত সমাধান কর: $27x+6y-z=85,\\quad 6x+15y+2z=72,\\quad x+y+54z=110$">Using the Gauss–Jacobi method, solve to 3 decimal places: $27x+6y-z=85,\quad 6x+15y+2z=72,\quad x+y+54z=110$</div>
+    <div class="qtext" data-en="Using the Gauss–Jacobi method, solve to 3 decimal places: $$\\begin{aligned}27x+6y-z&=85\\\\6x+15y+2z&=72\\\\x+y+54z&=110\\end{aligned}$$" data-bn="Gauss-Jacobi পদ্ধতি ব্যবহার করে তিন দশমিক স্থান পর্যন্ত সমাধান কর: $$\\begin{aligned}27x+6y-z&=85\\\\6x+15y+2z&=72\\\\x+y+54z&=110\\end{aligned}$$">Using the Gauss–Jacobi method, solve to 3 decimal places: $$\begin{aligned}27x+6y-z&=85\\6x+15y+2z&=72\\x+y+54z&=110\end{aligned}$$</div>
 
     <div class="lbl lbl-a" data-en="ANSWER" data-bn="উত্তর">ANSWER</div>
     <div class="ans-box"><span class="final">x ≈ 2.425, &nbsp; y ≈ 3.573, &nbsp; z ≈ 1.926</span></div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">gauss_jacobi</span>
+    <span class="kw">implicit none</span>
+    <span class="cm">! x,y,z are current values; xn,yn,zn are next iteration values.</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">z</span>, <span class="vr">xn</span>, <span class="vr">yn</span>, <span class="vr">zn</span>
+    <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
+
+    <span class="cm">! Start Jacobi iteration from zero for all unknowns.</span>
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">z</span> <span class="op">=</span> <span class="nm">0.0</span>
+
+    <span class="cm">! Use a maximum iteration count as a safety limit.</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">100</span>
+        <span class="cm">! Rearranged first equation: x=(85-6y+z)/27.</span>
+        <span class="vr">xn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">85.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span> <span class="op">+</span> <span class="vr">z</span><span class="br">)</span>  <span class="op">/</span> <span class="nm">27.0</span>
+        <span class="cm">! Rearranged second equation: y=(72-6x-2z)/15.</span>
+        <span class="vr">yn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">72.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">x</span> <span class="op">-</span> <span class="nm">2.0</span><span class="op">*</span><span class="vr">z</span><span class="br">)</span> <span class="op">/</span> <span class="nm">15.0</span>
+        <span class="cm">! Rearranged third equation: z=(110-x-y)/54.</span>
+        <span class="vr">zn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">110.0</span> <span class="op">-</span> <span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span><span class="br">)</span>       <span class="op">/</span> <span class="nm">54.0</span>
+
+        <span class="cm">! Stop once every variable changes by less than 0.0005.</span>
+        <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">xn</span><span class="op">-</span><span class="vr">x</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">yn</span><span class="op">-</span><span class="vr">y</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">&amp;</span>
+            <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">zn</span><span class="op">-</span><span class="vr">z</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">then</span>
+            <span class="cm">! Save final values before leaving the loop.</span>
+            <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
+            <span class="kw">exit</span>
+        <span class="kw">end if</span>
+        <span class="cm">! Jacobi updates all variables together after computing xn, yn, zn.</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
+    <span class="kw">end do</span>
+
+    <span class="cm">! Print the approximated solution.</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"x ="</span>, <span class="vr">x</span>, <span class="st">" y ="</span>, <span class="vr">y</span>, <span class="st">" z ="</span>, <span class="vr">z</span>
+<span class="kw">end program</span> <span class="fn">gauss_jacobi</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">jacobi_easy</span>
     <span class="kw">implicit none</span>
     <span class="kw">real</span> <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">z</span>, <span class="vr">xn</span>, <span class="vr">yn</span>, <span class="vr">zn</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
+    <span class="cm">! Start every unknown at zero.</span>
     <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">z</span> <span class="op">=</span> <span class="nm">0.0</span>
 
-    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">100</span>
-        <span class="vr">xn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">85.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span> <span class="op">+</span> <span class="vr">z</span><span class="br">)</span>  <span class="op">/</span> <span class="nm">27.0</span>
+    <span class="cm">! 30 rounds is plenty; no convergence check needed to keep it simple.</span>
+    <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="nm">30</span>
+        <span class="cm">! Each new value uses only the OLD x, y, z — that is Jacobi.</span>
+        <span class="vr">xn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">85.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">y</span> <span class="op">+</span> <span class="vr">z</span><span class="br">)</span> <span class="op">/</span> <span class="nm">27.0</span>
         <span class="vr">yn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">72.0</span> <span class="op">-</span> <span class="nm">6.0</span><span class="op">*</span><span class="vr">x</span> <span class="op">-</span> <span class="nm">2.0</span><span class="op">*</span><span class="vr">z</span><span class="br">)</span> <span class="op">/</span> <span class="nm">15.0</span>
-        <span class="vr">zn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">110.0</span> <span class="op">-</span> <span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span><span class="br">)</span>       <span class="op">/</span> <span class="nm">54.0</span>
-
-        <span class="kw">if</span> <span class="br">(</span><span class="fn">abs</span><span class="br">(</span><span class="vr">xn</span><span class="op">-</span><span class="vr">x</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">yn</span><span class="op">-</span><span class="vr">y</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span> <span class="op">&amp;</span>
-            <span class="op">.and.</span> <span class="fn">abs</span><span class="br">(</span><span class="vr">zn</span><span class="op">-</span><span class="vr">z</span><span class="br">)</span> <span class="op"><</span> <span class="nm">0.0005</span><span class="br">)</span> <span class="kw">then</span>
-            <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
-            <span class="kw">exit</span>
-        <span class="kw">end if</span>
+        <span class="vr">zn</span> <span class="op">=</span> <span class="br">(</span><span class="nm">110.0</span> <span class="op">-</span> <span class="vr">x</span> <span class="op">-</span> <span class="vr">y</span><span class="br">)</span> <span class="op">/</span> <span class="nm">54.0</span>
         <span class="vr">x</span> <span class="op">=</span> <span class="vr">xn</span>; <span class="vr">y</span> <span class="op">=</span> <span class="vr">yn</span>; <span class="vr">z</span> <span class="op">=</span> <span class="vr">zn</span>
     <span class="kw">end do</span>
 
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"x ="</span>, <span class="vr">x</span>, <span class="st">" y ="</span>, <span class="vr">y</span>, <span class="st">" z ="</span>, <span class="vr">z</span>
-<span class="kw">end program</span> <span class="fn">gauss_jacobi</span></pre></div>
+<span class="kw">end program</span> <span class="fn">jacobi_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Each equation is rearranged to isolate one variable, and all three are updated simultaneously from the previous iteration's values (Jacobi's distinguishing feature vs Gauss-Seidel). The system is diagonally dominant (27>6+1, 15>6+2, 54>1+1), guaranteeing convergence.</p>" data-bn="<p>প্রতিটি সমীকরণ এক চলকের জন্য পুনর্বিন্যাস করা হয়, এবং তিনটিই পূর্ববর্তী পুনরাবৃত্তির মান থেকে একসাথে হালনাগাদ হয় (গাউস-সাইডেলের সাথে জ্যাকোবির পার্থক্য এটাই)। সিস্টেমটি তির্যক-প্রাধান্য (27>6+1, 15>6+2, 54>1+1), তাই অভিসারিতা নিশ্চিত।</p>"><p>Each equation is rearranged to isolate one variable, and all three are updated simultaneously from the previous iteration's values (Jacobi's distinguishing feature vs Gauss-Seidel). The system is diagonally dominant (27>6+1, 15>6+2, 54>1+1), guaranteeing convergence.</p></div>
@@ -932,21 +1267,48 @@ table.calc td { color: var(--text); }
     </table>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">euler_method</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! x, y hold the current point; h is the step size.</span>
     <span class="kw">real</span>    <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">h</span>
+    <span class="cm">! i counts the steps, n is how many steps to take.</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">n</span>
 
+    <span class="cm">! Given initial condition x=0, y=0 and step size h=0.2.</span>
     <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">h</span> <span class="op">=</span> <span class="nm">0.2</span>
-    <span class="vr">n</span> <span class="op">=</span> <span class="nm">5</span>   <span class="cm">! (1.0 - 0.0) / 0.2</span>
+    <span class="cm">! Number of steps to reach x=1.0: (1.0 - 0.0) / 0.2 = 5.</span>
+    <span class="vr">n</span> <span class="op">=</span> <span class="nm">5</span>
 
+    <span class="cm">! Take n Euler steps, printing the point after each one.</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
+        <span class="cm">! Euler update: y_new = y + h*f(x,y), where f(x,y) = x + y.</span>
         <span class="vr">y</span> <span class="op">=</span> <span class="vr">y</span> <span class="op">+</span> <span class="vr">h</span> <span class="op">*</span> <span class="br">(</span><span class="vr">x</span> <span class="op">+</span> <span class="vr">y</span><span class="br">)</span>
+        <span class="cm">! Move x forward by one step before the next round.</span>
         <span class="vr">x</span> <span class="op">=</span> <span class="vr">x</span> <span class="op">+</span> <span class="vr">h</span>
         <span class="fn">print</span> <span class="op">*</span>, <span class="st">"x ="</span>, <span class="vr">x</span>, <span class="st">"  y ="</span>, <span class="vr">y</span>
     <span class="kw">end do</span>
 <span class="kw">end program</span> <span class="fn">euler_method</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">euler_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">x</span>, <span class="vr">y</span>, <span class="vr">h</span>
+
+    <span class="cm">! Given start values and step size.</span>
+    <span class="vr">x</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">y</span> <span class="op">=</span> <span class="nm">0.0</span>; <span class="vr">h</span> <span class="op">=</span> <span class="nm">0.2</span>
+
+    <span class="cm">! Step forward until x reaches 1.0.</span>
+    <span class="kw">do while</span> <span class="br">(</span><span class="vr">x</span> <span class="op">&lt;</span> <span class="nm">1.0</span><span class="br">)</span>
+        <span class="vr">y</span> <span class="op">=</span> <span class="vr">y</span> <span class="op">+</span> <span class="vr">h</span> <span class="op">*</span> <span class="br">(</span><span class="vr">x</span> <span class="op">+</span> <span class="vr">y</span><span class="br">)</span>   <span class="cm">! Euler step: y = y + h*f(x,y)</span>
+        <span class="vr">x</span> <span class="op">=</span> <span class="vr">x</span> <span class="op">+</span> <span class="vr">h</span>
+    <span class="kw">end do</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"y(1.0) ="</span>, <span class="vr">y</span>
+<span class="kw">end program</span> <span class="fn">euler_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Euler's method steps forward using the slope at the current point: $y_{n+1}=y_n+h\\cdot f(x_n,y_n)$, where $f(x,y)=x+y$. With $h=0.2$, five steps carry the solution from $x=0$ to $x=1.0$. Each new $y$ depends only on the immediately preceding value.</p>" data-bn="<p>অয়লার পদ্ধতি বর্তমান বিন্দুর ঢাল ব্যবহার করে সামনে এগোয়: $y_{n+1}=y_n+h\\cdot f(x_n,y_n)$, যেখানে $f(x,y)=x+y$। $h=0.2$ নিয়ে ৫ ধাপে $x=0$ থেকে $x=1.0$ পর্যন্ত সমাধান পাওয়া যায়। প্রতিটি নতুন $y$ শুধুমাত্র আগের মানের উপর নির্ভর করে।</p>"><p>Euler's method steps forward using the slope at the current point: $y_{n+1}=y_n+h\cdot f(x_n,y_n)$, where $f(x,y)=x+y$. With $h=0.2$, five steps carry the solution from $x=0$ to $x=1.0$. Each new $y$ depends only on the immediately preceding value.</p></div>
@@ -967,22 +1329,41 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Single-pass comparison finds the maximum." data-bn="একক-পাসে তুলনা করে সর্বোচ্চ মান নির্ণয়।">Single-pass comparison finds the maximum.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">largest_number</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! num holds the 10 values; largest keeps the biggest found so far.</span>
     <span class="kw">real</span>    <span class="op">::</span> <span class="vr">num</span><span class="br">(</span><span class="nm">10</span><span class="br">)</span>, <span class="vr">largest</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>
 
+    <span class="cm">! Read all 10 numbers into the array.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter 10 numbers:"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="nm">10</span><span class="br">)</span>
 
+    <span class="cm">! Assume the first element is the largest to start with.</span>
     <span class="vr">largest</span> <span class="op">=</span> <span class="vr">num</span><span class="br">(</span><span class="nm">1</span><span class="br">)</span>
+    <span class="cm">! Compare the rest; keep any value bigger than the current largest.</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">2</span>, <span class="nm">10</span>
         <span class="kw">if</span> <span class="br">(</span><span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span> <span class="op">></span> <span class="vr">largest</span><span class="br">)</span> <span class="vr">largest</span> <span class="op">=</span> <span class="vr">num</span><span class="br">(</span><span class="vr">i</span><span class="br">)</span>
     <span class="kw">end do</span>
 
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Largest = "</span>, <span class="vr">largest</span>
 <span class="kw">end program</span> <span class="fn">largest_number</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">largest_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">num</span><span class="br">(</span><span class="nm">10</span><span class="br">)</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter 10 numbers:"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">num</span>
+
+    <span class="cm">! maxval scans the whole array and returns its largest element.</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Largest = "</span>, <span class="fn">maxval</span><span class="br">(</span><span class="vr">num</span><span class="br">)</span>
+<span class="kw">end program</span> <span class="fn">largest_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>The first element is taken as the initial guess for the maximum. Each subsequent element is compared — whenever a larger value appears, it replaces the current largest. After one pass through all ten numbers, the true maximum remains.</p>" data-bn="<p>প্রথম উপাদানকে সর্বোচ্চের প্রাথমিক অনুমান ধরা হয়। পরবর্তী প্রতিটি উপাদানের সাথে তুলনা করা হয় — যখনই বড় মান পাওয়া যায়, তা বর্তমান সর্বোচ্চকে প্রতিস্থাপন করে। দশটি সংখ্যার একবার পরিদর্শনের পর প্রকৃত সর্বোচ্চ পাওয়া যায়।</p>"><p>The first element is taken as the initial guess for the maximum. Each subsequent element is compared — whenever a larger value appears, it replaces the current largest. After one pass through all ten numbers, the true maximum remains.</p></div>
@@ -1003,32 +1384,59 @@ table.calc td { color: var(--text); }
     <div class="ans-box" data-en="Result $C$ is a $3\\times5$ matrix computed via the standard triple loop." data-bn="ফলাফল $C$ একটি $3\\times5$ ম্যাট্রিক্স, প্রমিত ত্রিস্তরীয় লুপে গণনা করা হয়।">Result $C$ is a $3\times5$ matrix computed via the standard triple loop.</div>
 
     <div class="lbl lbl-c" data-en="CODE" data-bn="কোড">CODE</div>
-    <div class="code-shell"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+    <div class="method-switch">
+      <button class="method-btn active" type="button" onclick="setMethod(this,0)" data-en="Standard" data-bn="সাধারণ">Standard</button>
+      <button class="method-btn easy" type="button" onclick="setMethod(this,1)" data-en="Easier" data-bn="সহজ">Easier</button>
+    </div>
+    <div class="code-shell" data-method="0"><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
 <pre class="code"><span class="kw">program</span> <span class="fn">matrix_multiply</span>
     <span class="kw">implicit none</span>
+    <span class="cm">! Sizes: A is m x n, B is n x p, so the product C is m x p.</span>
     <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">m</span> <span class="op">=</span> <span class="nm">3</span>, <span class="vr">n</span> <span class="op">=</span> <span class="nm">4</span>, <span class="vr">p</span> <span class="op">=</span> <span class="nm">5</span>
     <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">p</span><span class="br">)</span>, <span class="vr">C</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">p</span><span class="br">)</span>
+    <span class="cm">! i, j index the result; k runs along the shared dimension.</span>
     <span class="kw">integer</span> <span class="op">::</span> <span class="vr">i</span>, <span class="vr">j</span>, <span class="vr">k</span>
 
+    <span class="cm">! Read A row by row, then B row by row.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter A (3x4):"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">m</span><span class="br">)</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter B (4x5):"</span>
     <span class="fn">read</span> <span class="op">*</span>, <span class="br">((</span><span class="vr">B</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">p</span><span class="br">)</span>, <span class="vr">i</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">n</span><span class="br">)</span>
 
+    <span class="cm">! For every output cell (i,j) build the row-by-column dot product.</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">m</span>
         <span class="kw">do</span> <span class="vr">j</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">p</span>
+            <span class="cm">! Start the sum at zero before accumulating.</span>
             <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="nm">0.0</span>
+            <span class="cm">! Add A(i,k)*B(k,j) across the shared dimension k.</span>
             <span class="kw">do</span> <span class="vr">k</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">n</span>
                 <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">=</span> <span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span> <span class="op">+</span> <span class="vr">A</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">k</span><span class="br">)</span> <span class="op">*</span> <span class="vr">B</span><span class="br">(</span><span class="vr">k</span>,<span class="vr">j</span><span class="br">)</span>
             <span class="kw">end do</span>
         <span class="kw">end do</span>
     <span class="kw">end do</span>
 
+    <span class="cm">! Print the result C one row at a time.</span>
     <span class="fn">print</span> <span class="op">*</span>, <span class="st">"C = A x B ="</span>
     <span class="kw">do</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">1</span>, <span class="vr">m</span>
         <span class="fn">print</span> <span class="op">*</span>, <span class="br">(</span><span class="vr">C</span><span class="br">(</span><span class="vr">i</span>,<span class="vr">j</span><span class="br">)</span>, <span class="vr">j</span><span class="op">=</span><span class="nm">1</span>,<span class="vr">p</span><span class="br">)</span>
     <span class="kw">end do</span>
 <span class="kw">end program</span> <span class="fn">matrix_multiply</span></pre></div>
+    <div class="code-shell" data-method="1" hidden><div class="code-bar"><span class="code-lang-tag fortran">Fortran 90</span><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div></div>
+<pre class="code"><span class="kw">program</span> <span class="fn">matmul_easy</span>
+    <span class="kw">implicit none</span>
+    <span class="kw">integer</span>, <span class="kw">parameter</span> <span class="op">::</span> <span class="vr">m</span> <span class="op">=</span> <span class="nm">3</span>, <span class="vr">n</span> <span class="op">=</span> <span class="nm">4</span>, <span class="vr">p</span> <span class="op">=</span> <span class="nm">5</span>
+    <span class="kw">real</span> <span class="op">::</span> <span class="vr">A</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">n</span><span class="br">)</span>, <span class="vr">B</span><span class="br">(</span><span class="vr">n</span>,<span class="vr">p</span><span class="br">)</span>, <span class="vr">C</span><span class="br">(</span><span class="vr">m</span>,<span class="vr">p</span><span class="br">)</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"Enter A (3x4) then B (4x5):"</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">A</span>
+    <span class="fn">read</span> <span class="op">*</span>, <span class="vr">B</span>
+
+    <span class="cm">! matmul does the whole row-by-column multiplication for us.</span>
+    <span class="vr">C</span> <span class="op">=</span> <span class="fn">matmul</span><span class="br">(</span><span class="vr">A</span>, <span class="vr">B</span><span class="br">)</span>
+
+    <span class="fn">print</span> <span class="op">*</span>, <span class="st">"C = A x B ="</span>
+    <span class="fn">print</span> <span class="op">*</span>, <span class="vr">C</span>
+<span class="kw">end program</span> <span class="fn">matmul_easy</span></pre></div>
 
     <div class="lbl lbl-e" data-en="EXPLANATION" data-bn="ব্যাখ্যা">EXPLANATION</div>
     <div class="expl" data-en="<p>Matrix multiplication is valid since $A$'s column count (4) matches $B$'s row count (4). The result is $3\\times5$. Each entry $C(i,j)$ is the dot product of row $i$ of $A$ with column $j$ of $B$, computed by the innermost loop accumulating $A(i,k)\\times B(k,j)$.</p>" data-bn="<p>$A$-এর কলাম সংখ্যা (৪) $B$-এর সারি সংখ্যার (৪) সমান বলে গুণন বৈধ। ফলাফল $3\\times5$। প্রতিটি $C(i,j)$ হলো $A$-এর $i$-তম সারি ও $B$-এর $j$-তম কলামের ডট গুণফল, যা অন্তর্তম লুপে $A(i,k)\\times B(k,j)$ যোগ করে গণনা হয়।</p>"><p>Matrix multiplication is valid since $A$'s column count (4) matches $B$'s row count (4). The result is $3\times5$. Each entry $C(i,j)$ is the dot product of row $i$ of $A$ with column $j$ of $B$, computed by the innermost loop accumulating $A(i,k)\times B(k,j)$.</p></div>
@@ -1038,13 +1446,28 @@ table.calc td { color: var(--text); }
 </div><!-- /wrap -->
 
 <script>
+// Toggle between the two code methods inside one question, in place.
+function setMethod(btn, idx) {
+  const sw = btn.parentElement;                       // .method-switch
+  sw.querySelectorAll('.method-btn').forEach((b, i) =>
+    b.classList.toggle('active', i === idx));
+  let el = sw.nextElementSibling;                      // walk the sibling shells
+  while (el && el.classList.contains('code-shell')) {
+    el.hidden = (parseInt(el.dataset.method, 10) !== idx);
+    el = el.nextElementSibling;
+  }
+}
+
 function setLang(lang) {
   document.getElementById('btn-en').classList.toggle('active', lang === 'en');
   document.getElementById('btn-bn').classList.toggle('active', lang === 'bn');
 
   document.querySelectorAll('[data-en][data-bn]').forEach(el => {
-    const content = el.getAttribute('data-' + lang);
+    let content = el.getAttribute('data-' + lang);
     if (content !== null) {
+      // Attributes store doubled backslashes (\\quad, \\frac …); collapse them
+      // back to single so MathJax reads valid TeX instead of literal text.
+      content = content.replace(/\\\\/g, '\\');
       el.innerHTML = content;
     }
   });
